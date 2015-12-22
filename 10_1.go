@@ -27,7 +27,7 @@ import (
 var input = `1113222113`
 
 func main() {
-	for j := 0; j < 50; j++ {
+	for j := 0; j < 40; j++ {
 		prevChar := byte('x')
 		prevCount := 0
 		newInput := ""
