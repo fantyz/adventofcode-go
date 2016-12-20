@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -83,11 +84,89 @@ func main() {
 	}
 
 	replace(molecule, replacements)
-	fmt.Println("Possibilities:", len(seen))
-	/*
-		for k := range seen {
-			fmt.Println(k)
-		}*/
+	fmt.Println("Part 1: Possibilities:", len(seen))
+
+	// clean up
+	seen = map[string]struct{}{}
+
+	// inverse replacements
+	invReps := Replacements{}
+	for r, vs := range replacements {
+		for i := range vs {
+			if r == "e" {
+				continue
+			}
+			invReps = append(invReps, &Replacement{from: vs[i], to: r})
+		}
+	}
+
+	sort.Sort(invReps)
+	for _, r := range invReps {
+		fmt.Println(r)
+	}
+	fmt.Println()
+
+	steps := 0
+	for {
+		steps++
+
+		// find the first match and replace it
+		lastMolecule := molecule
+		for _, r := range invReps {
+			if idx := strings.Index(molecule, r.from); idx >= 0 {
+				// found it, replace it
+				//fmt.Println("Step", steps)
+				//fmt.Printf("Replacing with rule [%s] from\n\t%s\nto\n\t%s\n", r, molecule, molecule[:idx]+r.to+molecule[idx+len(r.from):])
+				molecule = molecule[:idx] + r.to + molecule[idx+len(r.from):]
+				break
+			}
+		}
+		if lastMolecule == molecule {
+			break
+		}
+
+		//var in string
+		//_, _ = fmt.Scanf("%s", &in)
+	}
+
+	// lets hope its in the list... otherwise we're still screwed...
+	done := false
+	for _, s := range replacements["e"] {
+		if s == molecule {
+			done = true
+			break
+		}
+	}
+	if done {
+		fmt.Println("We're in luck! It could be done in", steps, "steps!!")
+	} else {
+		fmt.Println("(╯°□°）╯︵ ┻━┻")
+	}
+}
+
+type Replacement struct {
+	from, to string
+}
+
+func (r *Replacement) String() string {
+	return fmt.Sprintf("%s => %s", r.from, r.to)
+}
+
+type Replacements []*Replacement
+
+func (r Replacements) Len() int {
+	return len(r)
+}
+
+func (r Replacements) Swap(i, j int) {
+	r[i], r[j] = r[j], r[i]
+}
+
+func (r Replacements) Less(i, j int) bool {
+	if len(r[i].from) == len(r[j].from) {
+		return len(r[i].to) < len(r[j].to)
+	}
+	return len(r[i].from) > len(r[j].from)
 }
 
 var seen = map[string]struct{}{}
@@ -104,7 +183,9 @@ func replace(m string, replacements map[string][]string) {
 	}
 }
 
-const testpuzzleInput = `HO => HO
+const testpuzzleInput = `e => H
+e => O
+H => HO
 H => OH
 O => HH
 
