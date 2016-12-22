@@ -51,26 +51,26 @@ func main() {
 	fmt.Println("Advent of code 2016: Day 21")
 
 	code := "abcdefgh"
-	code = "abcde"
+	//code = "abcde"
 	fmt.Println("Part 1: Scrambling " + code + "...")
-	for _, line := range strings.Split(testpuzzleInput, "\n") {
+	for _, line := range strings.Split(puzzleInput, "\n") {
 		code = NewOp(line).Execute(code)
 		fmt.Println(code)
 	}
 
-	//code = "fbgdceah"
+	code = "fbgdceah"
 	fmt.Println("Part 2: Descrambling " + code + "...")
 
-	lines := strings.Split(testpuzzleInput, "\n")
+	lines := strings.Split(puzzleInput, "\n")
 	for i := len(lines) - 1; i >= 0; i-- {
-		code = NewOp(lines[i]).Reverse().Execute(code)
+		code = NewOp(lines[i]).Reverse(code).Execute(code)
 		fmt.Println(code)
 	}
 }
 
 type Op interface {
 	Execute(code string) string
-	Reverse() Op
+	Reverse(code string) Op
 }
 
 var (
@@ -147,7 +147,7 @@ type SwapPosOp struct {
 	p1, p2 int
 }
 
-func (o *SwapPosOp) Reverse() Op {
+func (o *SwapPosOp) Reverse(code string) Op {
 	return o
 }
 
@@ -182,7 +182,7 @@ func (o *SwapLetterOp) Execute(code string) string {
 	return code
 }
 
-func (o *SwapLetterOp) Reverse() Op {
+func (o *SwapLetterOp) Reverse(code string) Op {
 	return o
 }
 
@@ -209,7 +209,7 @@ func (o *RotateOp) Execute(code string) string {
 	}
 }
 
-func (o *RotateOp) Reverse() Op {
+func (o *RotateOp) Reverse(code string) Op {
 	if o.direction == "left" {
 		o.direction = "right"
 	} else {
@@ -248,9 +248,15 @@ func (o *RotateRelOp) Execute(code string) string {
 	return rotateOp.Execute(code)
 }
 
-func (o *RotateRelOp) Reverse() Op {
-	panic("non trivial")
-	return o
+func (o *RotateRelOp) Reverse(code string) Op {
+	for i := 1; i <= len(code); i++ {
+		ro := NewRotateOp("left", i)
+		if o.Execute(ro.Execute(code)) == code {
+			// ro is the inverse
+			return ro
+		}
+	}
+	panic("no reverse rotate op found (letter=" + o.letter + ", code=" + code + ")")
 }
 
 func NewReverseOp(p1, p2 int) *ReverseOp {
@@ -273,7 +279,7 @@ func (o *ReverseOp) Execute(code string) string {
 	return code[:o.p1] + rev + code[o.p2+1:]
 }
 
-func (o *ReverseOp) Reverse() Op {
+func (o *ReverseOp) Reverse(code string) Op {
 	return o
 }
 
@@ -295,8 +301,8 @@ func (o *MoveOp) Execute(code string) string {
 	return code
 }
 
-func (o *MoveOp) Reverse() Op {
-	panic("non trivial")
+func (o *MoveOp) Reverse(code string) Op {
+	o.p1, o.p2 = o.p2, o.p1
 	return o
 }
 
