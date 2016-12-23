@@ -146,44 +146,70 @@ func main() {
 
 	fmt.Println("Part 1: The cluster contains", ViablePairs(cluster), "viable pairs")
 
+	// NOTE: Non generic solution for part 2 - looked at the data + the layout manually
 	// Looking at the data, the largest used is 73T or >100T and all nodes can fit 73T.
 
-	// STEP 0: Locate "hole"
-	// STEP 1: Move "hole" from bottom part to the left, up and all the way to the right
-	// STEP 2: Move the "hole" in a circular motion all the way back to the left until it be done!
-
-	/*
-		cluster.Print()
-		for y := 0; y < Height; y++ {
-			for x := 0; x < Width; x++ {
-				found := false
-				if y > 0 && cluster[y-1][x].Available() >= cluster[y][x].Used {
-					cluster[y-1][x].Used += cluster[y][x].Used
-					cluster[y][x].Used = 0
-					found = true
-				}
-				if y < Height-1 && cluster[y+1][x].Available() >= cluster[y][x].Used {
-					cluster[y+1][x].Used += cluster[y][x].Used
-					cluster[y][x].Used = 0
-					found = true
-				}
-				if x > 0 && cluster[y][x-1].Available() >= cluster[y][x].Used {
-					cluster[y][x-1].Used += cluster[y][x].Used
-					cluster[y][x].Used = 0
-					found = true
-				}
-				if x < Width-1 && cluster[y][x+1].Available() >= cluster[y][x].Used {
-					cluster[y][x+1].Used += cluster[y][x].Used
-					cluster[y][x].Used = 0
-					found = true
-				}
-				if found {
-					fmt.Println()
-					cluster.Print()
-				}
+	// STEP 1: Make a "hole"
+	hx := 0
+	hy := 0
+	steps := 0
+	found := false
+	for y := 0; y < Height && !found; y++ {
+		for x := 0; x < Width && !found; x++ {
+			if x < Width-1 && cluster[y][x+1].Available() >= cluster[y][x].Used {
+				cluster.Move(x, y, x+1, y)
+				found = true
+				hx = x
+				hy = y
+				steps++
 			}
 		}
-	*/
+	}
+
+	// STEP 2: Move "hole" from bottom part to the left, up and all the way to the right
+	for x := hx - 1; x >= 0; x-- {
+		cluster.Move(x, hy, x+1, hy)
+		steps++
+	}
+	hx = 0
+	for y := hy - 1; y >= 0; y-- {
+		cluster.Move(hx, y, hx, y+1)
+		steps++
+	}
+	hy = 0
+	for x := hx; x < Width-1; x++ {
+		cluster.Move(x+1, hy, x, hy)
+		steps++
+	}
+	hx = Width - 1
+
+	// STEP 3: Move the "hole" in a circular motion all the way back to the left until it be done!
+	for {
+		cluster.Move(hx, hy+1, hx, hy)
+		hx, hy = hx, hy+1
+		steps++
+
+		cluster.Move(hx-1, hy, hx, hy)
+		hx, hy = hx-1, hy
+		steps++
+
+		cluster.Move(hx-1, hy, hx, hy)
+		hx, hy = hx-1, hy
+		steps++
+
+		cluster.Move(hx, hy-1, hx, hy)
+		hx, hy = hx, hy-1
+		steps++
+
+		cluster.Move(hx+1, hy, hx, hy)
+		hx, hy = hx+1, hy
+		steps++
+
+		if hx == 1 {
+			break
+		}
+	}
+	fmt.Println("Part 2: Took", steps, "moves")
 }
 
 func ViablePairs(c *Cluster) int {
@@ -218,14 +244,22 @@ const Height = 26
 
 type Cluster [Height][Width]Node
 
+func (c *Cluster) Move(x1, y1, x2, y2 int) {
+	c[y2][x2].Used += c[y1][x1].Used
+	if c[y2][x2].Available() < 0 {
+		panic("Invalid move!")
+	}
+	c[y1][x1].Used = 0
+}
+
 func (c *Cluster) Print() {
 	for y := 0; y < Height; y++ {
 		for x := 0; x < Width; x++ {
 			switch {
-			case y == 0 && x == 0:
-				fmt.Print("T")
-			case y == 0 && x == Width-1:
-				fmt.Print("G")
+			//case y == 0 && x == 0:
+			//	fmt.Print("T")
+			//case y == 0 && x == Width-1:
+			//		fmt.Print("G")
 			case c[y][x].Used > 100:
 				fmt.Print("#")
 			case c[y][x].Used == 0:
@@ -236,6 +270,7 @@ func (c *Cluster) Print() {
 		}
 		fmt.Println()
 	}
+	fmt.Println()
 }
 
 type Node struct {
