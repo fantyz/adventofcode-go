@@ -28,7 +28,4 @@ cntj (57)`, "tknk"},
 	for i, testCase := range testCases {
 		assert.Equal(t, testCase.Result, NewTower(testCase.In).Name, "(case=%d)", i)
 	}
-
-	NewTower(testCases[0].In).Print()
-	t.Fail()
 }
