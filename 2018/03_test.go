@@ -1,18 +1,34 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestChronalCalibration(t *testing.T) {
 	testCases := []struct {
-		In  string
-		Out int
-	}{}
+		Claims     string
+		ExpOverlap int
+		ExpClaims  []Claim
+	}{
+		{
+			Claims: `
+#1 @ 1,3: 4x4
+#2 @ 3,1: 4x4
+#3 @ 5,5: 2x2
+`,
+			ExpOverlap: 4,
+			ExpClaims:  []Claim{{"#3", 5, 5, 2, 2}},
+		},
+	}
 
 	for i, c := range testCases {
-		i := a(c.In)
-		assert.Equal(t, c.Out, i, "(case=%d)", i)
+		fabric := NewFabric(10, 10)
+		claims := NewClaims(c.Claims)
+		fabric.AddClaims(claims)
+		fabric.Print()
+		assert.Equal(t, c.ExpOverlap, fabric.Overlap(), "(case=%d)", i)
+		assert.Equal(t, c.ExpClaims, fabric.FindNonOverlappedClaims(claims), "(case=%d)", i)
 	}
 }
