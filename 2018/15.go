@@ -1,8 +1,8 @@
 package main
 
 import (
-	"container/heap"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -15,12 +15,13 @@ func main() {
 	fmt.Println("Day 15: Beverage Bandits")
 	c := NewCave(puzzleInput)
 	fmt.Println(c.String())
+	AStar(Coord{0, 0}, Coord{10, 10}, nil)
 }
 
 type Entity uint8
 
 const (
-	Nothing Entity = iota
+	Empty Entity = iota
 	Wall
 	Goblin
 	Elf
@@ -28,7 +29,7 @@ const (
 
 func (e Entity) String() string {
 	switch e {
-	case Nothing:
+	case Empty:
 		return "."
 	case Wall:
 		return "#"
@@ -42,7 +43,21 @@ func (e Entity) String() string {
 }
 
 type Cave struct {
-	c [][]Entity
+	c      [][]Entity
+	actors []*Actor
+}
+
+const (
+	elfAttack = 3
+	elfHP     = 200
+	orcAttack = 3
+	orcHP     = 200
+)
+
+type Actor struct {
+	c      Coord
+	hp     int
+	attack int
 }
 
 type Coord struct {
@@ -63,11 +78,13 @@ func NewCave(in string) *Cave {
 			case '#':
 				row[x] = Wall
 			case 'E':
+				c.actors = append(c.actors, &Actor{Coord{x, len(c.c)}, elfHP, elfAttack})
 				row[x] = Elf
 			case 'G':
+				c.actors = append(c.actors, &Actor{Coord{x, len(c.c)}, orcHP, orcAttack})
 				row[x] = Goblin
 			default:
-				panic("Unknown entity")
+				panic("Unknown entity: " + string(l[x]))
 			}
 		}
 		c.c = append(c.c, row)
@@ -86,65 +103,170 @@ func (c *Cave) String() string {
 	return str
 }
 
+func (c *Cave) Tick() {
+	//fmt.Println()
+	sort.Slice(c.actors, func(i, j int) bool { return c.actors[i].c.Less(c.actors[j].c) })
+
+	for i, actor := range c.actors {
+		e := c.c[actor.c.Y][actor.c.X]
+
+		//fmt.Println(c.String())
+		//fmt.Printf("Moving %v %v\n", e, actor)
+
+		enemyClose := false
+		for _, n := range []Coord{{actor.c.X + 1, actor.c.Y}, {actor.c.X - 1, actor.c.Y}, {actor.c.X, actor.c.Y + 1}, {actor.c.X, actor.c.Y - 1}} {
+			if (e == Elf && c.c[n.Y][n.X] == Goblin) ||
+				(e == Goblin && c.c[n.Y][n.X] == Elf) {
+				// enemy adjacant
+				enemyClose = true
+			}
+		}
+		if enemyClose {
+			// attack!
+
+			//fmt.Println(" > Close to enemy, not moving")
+			continue
+		}
+
+		var targetLoc, nextStep Coord
+		dist := -1
+
+		for _, enemy := range c.actors {
+			if c.c[enemy.c.Y][enemy.c.X] == e {
+				// not an enemy!
+				continue
+			}
+
+			for _, n := range []Coord{{enemy.c.X + 1, enemy.c.Y}, {enemy.c.X - 1, enemy.c.Y}, {enemy.c.X, enemy.c.Y + 1}, {enemy.c.X, enemy.c.Y - 1}} {
+				if c.c[n.Y][n.X] != Empty {
+					// can't move into something
+					continue
+				}
+
+				path := AStar(actor.c, n, c.c)
+				if len(path) > 0 && (dist < 0 || len(path) <= dist) {
+					//fmt.Println("Possible to move to:", path[0], " (dist=", len(path), ") ; path:", path)
+					if len(path) == dist && targetLoc.Less(n) {
+						// tagetLoc takes precedence due to being earlier in "read order"
+						//fmt.Println("Skipping path due to being later in reading order!")
+						continue
+					}
+
+					targetLoc = n
+					nextStep = path[0]
+					dist = len(path)
+				}
+			}
+		}
+
+		if dist < 0 {
+			//fmt.Println("No paths found...")
+			continue
+		}
+
+		//fmt.Printf("Moving... %v to %v (dest=%v)\n", actor, nextStep, targetLoc)
+		// move to nextStep
+		c.c[nextStep.Y][nextStep.X] = e
+		c.c[actor.c.Y][actor.c.X] = Empty
+		c.actors[i].c = nextStep
+	}
+
+}
+
 func AStar(from, to Coord, m [][]Entity) []Coord {
 	abs := func(i int) int {
-		if i >= 0 {
-			return i
+		if i < 0 {
+			return -1 * i
 		}
-		return -1 * i
+		return i
 	}
-	heuristicCost := func(from, to Coord) int {
-		return abs(from.X-to.X) + abs(from.Y-to.Y)
+	simpleDist := func(a, b Coord) int {
+		return abs(a.X-b.X) + abs(a.Y-b.Y)
 	}
 
-	completed := map[Coord]struct{}{}
+	type node struct {
+		c Coord
+		d int
+	}
 
-	openSet := []Coord{from}
+	//fmt.Println()
+	//fmt.Println("  >>", from, " => ", to)
 
+	closedSet := map[Coord]struct{}{}
+	openSet := []node{node{from, simpleDist(from, to)}}
 	cameFrom := map[Coord]Coord{}
 	gScore := map[Coord]int{from: 0}
-	fScore := map[Coord]int{from: heuristicCost(from, to)}
 
 	for len(openSet) > 0 {
+		// grab the next one that looks to be cloest to where we're going
+		sort.Slice(openSet, func(i, j int) bool {
+			if openSet[i].d != openSet[j].d {
+				return openSet[i].d <= openSet[j].d
+			}
+			// sort equal distance by "reading order" to give preference to this when multiple equally lenth paths exist
+			return openSet[i].c.Y < openSet[j].c.Y || (openSet[i].c.Y == openSet[j].c.Y && openSet[i].c.X < openSet[j].c.X)
+		})
+		//fmt.Println()
+		//fmt.Println("  >>  openSet:", openSet)
+		//fmt.Println("  >> cameFrom:", cameFrom)
+		cur := openSet[0].c
+		if cur == to {
+			// done, retrace our steps
+			var path []Coord
+			for {
+				path = append([]Coord{cur}, path...)
+				var found bool
+				cur, found = cameFrom[cur]
+				if !found {
+					panic("missing coord from cameFrom when tracing our steps")
+				}
+				if cur == from {
+					//fmt.Println("  >> path:", path)
+					return path
+				}
+			}
+		}
 
+		openSet = openSet[1:]
+		closedSet[cur] = struct{}{}
+
+		for _, neighbor := range []Coord{{cur.X, cur.Y - 1}, {cur.X - 1, cur.Y}, {cur.X + 1, cur.Y}, {cur.X, cur.Y + 1}} {
+			if _, found := closedSet[neighbor]; found {
+				// already evaluated
+				continue
+			}
+
+			if m[neighbor.Y][neighbor.X] != Empty {
+				// something is blocking this coordinate, can't go there
+				continue
+			}
+
+			// distance from start to neighbor (distance from current to neighbor is 1 by design)
+			d := gScore[cur] + 1
+
+			idx := sort.Search(len(openSet), func(i int) bool { return openSet[i].c == neighbor })
+			if idx == len(openSet) {
+				// not found, add it
+				openSet = append(openSet, node{neighbor, d + simpleDist(neighbor, to)})
+			}
+
+			if gs, found := gScore[neighbor]; found && d >= gs {
+				// already found a better path
+				continue
+			}
+
+			// this path is better than anything previously seen
+			cameFrom[neighbor] = cur
+			openSet[idx].d = d + simpleDist(neighbor, to)
+			gScore[neighbor] = d
+		}
 	}
 
 	return nil
 }
 
-// priority queue
-
-type Item struct {
-	value   Coord
-	estDist int
-	index   int
-}
-
-type PriorityQueue []*Item
-
-func (pq PriorityQueue) Len() int {
-	return len(pq)
-}
-
-func (pq PriorityQueue) Less(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].index, pq[j].index = i, j
-}
-
-func (pq *PriorityQueue) Push(x interface{}) {
-	item := x.(*Item)
-	item.index = len(*pq)
-	*pq = append(*pq, item)
-}
-
-func (pq *PriorityQueue) Pop() interface{} {
-	item := (*pq)[len(*pq)-1]
-	*pq = (*pq)[:len(*pq)-1]
-	return item
-}
-
-func (pq *PriorityQueue) update(item *Item, value Coord, estDist int) {
-	heap.Fix(pq, item.index)
+func (c Coord) Less(c2 Coord) bool {
+	return c.Y < c2.Y || (c.Y == c2.Y && c.X < c2.X)
 }
 
 const puzzleInput = `################################
