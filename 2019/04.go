@@ -36,6 +36,10 @@ How many different passwords within the range given in your puzzle input meet al
 
 Your puzzle answer was 1972.
 
+---
+
+Note to self: Clearification on part two rule is "must contain at least one group of exactly 2 digits"
+
 */
 
 func main() {
