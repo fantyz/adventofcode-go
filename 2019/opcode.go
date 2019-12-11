@@ -6,79 +6,85 @@ import (
 	"strings"
 )
 
-func ExecuteOpcode(program []int, input <-chan int) ([]int, []int) {
-	var out []int
+func ExecuteOpcode(program []int, input <-chan int) <-chan int {
+	out := make(chan int)
+
 	p := make([]int, len(program))
 	copy(p, program)
 
-	relativeBase := 0
-	i := 0
-	for {
-		op := opcode(p[i])
-		switch op[0] {
-		case 1:
-			regs := getRegs(&p, i, op, relativeBase, 3)
-			*regs[2] = *regs[0] + *regs[1]
-			i += 4
-		case 2:
-			regs := getRegs(&p, i, op, relativeBase, 3)
-			*regs[2] = *regs[0] * *regs[1]
-			i += 4
-		case 3:
-			// input
-			regs := getRegs(&p, i, op, relativeBase, 1)
-			*regs[0] = <-input
-			i += 2
-		case 4:
-			// output
-			regs := getRegs(&p, i, op, relativeBase, 1)
-			out = append(out, *regs[0])
-			i += 2
-		case 5:
-			// jump if true
-			regs := getRegs(&p, i, op, relativeBase, 2)
-			if *regs[0] != 0 {
-				i = *regs[1]
-				continue
+	go func() {
+		relativeBase := 0
+		i := 0
+		for {
+			op := opcode(p[i])
+			switch op[0] {
+			case 1:
+				regs := getRegs(&p, i, op, relativeBase, 3)
+				*regs[2] = *regs[0] + *regs[1]
+				i += 4
+			case 2:
+				regs := getRegs(&p, i, op, relativeBase, 3)
+				*regs[2] = *regs[0] * *regs[1]
+				i += 4
+			case 3:
+				// input
+				regs := getRegs(&p, i, op, relativeBase, 1)
+				*regs[0] = <-input
+				i += 2
+			case 4:
+				// output
+				regs := getRegs(&p, i, op, relativeBase, 1)
+				out <- *regs[0]
+				i += 2
+			case 5:
+				// jump if true
+				regs := getRegs(&p, i, op, relativeBase, 2)
+				if *regs[0] != 0 {
+					i = *regs[1]
+					continue
+				}
+				i += 3
+			case 6:
+				// jump if false
+				regs := getRegs(&p, i, op, relativeBase, 2)
+				if *regs[0] == 0 {
+					i = *regs[1]
+					continue
+				}
+				i += 3
+			case 7:
+				// less than
+				regs := getRegs(&p, i, op, relativeBase, 3)
+				if *regs[0] < *regs[1] {
+					*regs[2] = 1
+				} else {
+					*regs[2] = 0
+				}
+				i += 4
+			case 8:
+				// equals
+				regs := getRegs(&p, i, op, relativeBase, 3)
+				if *regs[0] == *regs[1] {
+					*regs[2] = 1
+				} else {
+					*regs[2] = 0
+				}
+				i += 4
+			case 9:
+				// adjust the relative base
+				regs := getRegs(&p, i, op, relativeBase, 1)
+				relativeBase += *regs[0]
+				i += 2
+			case 99:
+				close(out)
+				return
+			default:
+				panic(fmt.Sprintf("unknown opcode: %d (%v)", op[0], op))
 			}
-			i += 3
-		case 6:
-			// jump if false
-			regs := getRegs(&p, i, op, relativeBase, 2)
-			if *regs[0] == 0 {
-				i = *regs[1]
-				continue
-			}
-			i += 3
-		case 7:
-			// less than
-			regs := getRegs(&p, i, op, relativeBase, 3)
-			if *regs[0] < *regs[1] {
-				*regs[2] = 1
-			} else {
-				*regs[2] = 0
-			}
-			i += 4
-		case 8:
-			// equals
-			regs := getRegs(&p, i, op, relativeBase, 3)
-			if *regs[0] == *regs[1] {
-				*regs[2] = 1
-			} else {
-				*regs[2] = 0
-			}
-			i += 4
-		case 9:
-			// adjust the relative base
-			regs := getRegs(&p, i, op, relativeBase, 1)
-			relativeBase += *regs[0]
-			i += 2
-		case 99:
-			return p, out
-		default:
-			panic(fmt.Sprintf("unknown opcode: %d (%v)", op[0], op))
 		}
-	}
+	}()
+
+	return out
 }
 
 func Inputter(in []int) <-chan int {
@@ -92,7 +98,7 @@ func Inputter(in []int) <-chan int {
 	return c
 }
 
-func Outputter(c chan int) []int {
+func Outputter(c <-chan int) []int {
 	var out []int
 	for v := range c {
 		out = append(out, v)

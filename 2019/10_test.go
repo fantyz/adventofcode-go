@@ -40,16 +40,41 @@ func TestAngleToY(t *testing.T) {
 }
 
 func TestShootAsteroids(t *testing.T) {
+	field := Load(`.#..##.###...#######
+##.############..##.
+.#.######.########.#
+.###.#######.####.#.
+#####.##.#.##.###.##
+..#####..#.#########
+####################
+#.####....###.#.#.##
+##.#################
+#####.##.###..####..
+..######..##.#######
+####.##.####...##..#
+.#####..#.######.###
+##...#.##########...
+#.##########.#######
+.####.#.###.###.#.##
+....##.##.###..#####
+.#.#.###########.###
+#.#.#.#####.####.###
+###.##.####.##.#..#`)
+	inX, inY := 11, 13
+
 	testCases := []struct {
-		InX, InY int
-		InField  string
+		N    int
+		X, Y int
 	}{
-		{2, 3, "#####\n#####\n.....\n..#..\n....."},
-		{2, 3, ".....\n.....\n.....\n..#..\n#####"},
+		{1, 11, 12},
+		{2, 12, 1},
+		{10, 12, 8},
+		{20, 16, 0},
+		{200, 8, 2},
 	}
 
-	for _, c := range testCases {
-		ShootAsteroid(c.InX, c.InY, Load(c.InField))
-		//assert.InDelta(t, c.Angle, AngleToY(c.InX, c.InY), 0.01, "(case=%d)", i)
+	for i, c := range testCases {
+		x, y := ShootAsteroid(inX, inY, field, c.N)
+		assert.Equal(t, Coord{c.X, c.Y}, Coord{x, y}, "(case=%d)", i)
 	}
 }
