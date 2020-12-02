@@ -115,12 +115,12 @@ func ValidatePassword2(min, max int, seq string, pass string) bool {
 
 	c := seq[0] // yes, no support for UTF8 or the likes to be found here!
 
-	if pass[min] != c && pass[max] != c {
-		return false
+	if pass[min] == c && pass[max] != c {
+		return true
 	}
-	if pass[min] == c && pass[max] == c {
-		return false
+	if pass[min] != c && pass[max] == c {
+		return true
 	}
 
-	return true
+	return false
 }
