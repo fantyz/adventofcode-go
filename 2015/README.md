@@ -14,11 +14,7 @@ Any code that can be re-used in muliple puzzles is located in its own files.
 
 ## Running the puzzles
 
-Simply specify what day you want to run as an argument.
-
-```
-go run . <day>
-```
+Specify what day you want to run as an argument (eg. `go run . <day>`) or run all days by not specifying a day (eg. `go run .`).
 
 ## Whats with `old/`?
 
