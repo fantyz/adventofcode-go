@@ -27,3 +27,17 @@ func TestDistributePresentsToHouses(t *testing.T) {
 		}
 	}
 }
+
+func TestDay3Pt1(t *testing.T) {
+	totalVisited, err := DistributePresentsToHouses(1, day3Input)
+	if assert.NoError(t, err) {
+		assert.Equal(t, 2081, totalVisited)
+	}
+}
+
+func TestDay3Pt2(t *testing.T) {
+	totalVisited, err := DistributePresentsToHouses(2, day3Input)
+	if assert.NoError(t, err) {
+		assert.Equal(t, 2341, totalVisited)
+	}
+}

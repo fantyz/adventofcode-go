@@ -31,3 +31,9 @@ func TestDeliverPresents(t *testing.T) {
 		assert.Equal(t, c.FirstInBasement, i, "FirstInBasement [%s]", c.Instructions)
 	}
 }
+
+func TestDay1(t *testing.T) {
+	finalFloor, firstBasementIdx := DeliverPresents(day1Input)
+	assert.Equal(t, 280, finalFloor, "pt1")
+	assert.Equal(t, 1797, firstBasementIdx, "pt2")
+}

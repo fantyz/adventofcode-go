@@ -34,3 +34,11 @@ func TestWrapBoxes(t *testing.T) {
 		assert.Equal(t, 48, r, "Ribbon needed")
 	}
 }
+
+func TestDay2(t *testing.T) {
+	paperNeeded, ribbonNeeded, err := WrapBoxes(day2Input)
+	if assert.NoError(t, err) {
+		assert.Equal(t, 1598415, paperNeeded, "pt1")
+		assert.Equal(t, 3812909, ribbonNeeded, "pt2")
+	}
+}
