@@ -11,7 +11,7 @@ func TestValidatePassword(t *testing.T) {
 		Min, Max int
 		Seq      string
 		Pass     string
-		ExpValid   bool
+		ExpValid bool
 	}{
 		"example 1": {1, 3, "a", "abcde", true},
 		"example 2": {1, 3, "b", "cdefg", false},
@@ -33,7 +33,7 @@ func TestValidatePassword2(t *testing.T) {
 		Min, Max int
 		Seq      string
 		Pass     string
-		ExpValid   bool
+		ExpValid bool
 	}{
 		"example 1": {1, 3, "a", "abcde", true},
 		"example 2": {1, 3, "b", "cdefg", false},
@@ -50,7 +50,6 @@ func TestValidatePassword2(t *testing.T) {
 	}
 }
 
-
 func TestValidatePasswordFile(t *testing.T) {
 	testCase := `1-3 a: abcde
 1-3 b: cdefg
@@ -58,4 +57,12 @@ func TestValidatePasswordFile(t *testing.T) {
 
 	assert.Equal(t, 2, ValidatePasswordFile(0, testCase), "Policy 0")
 	assert.Equal(t, 1, ValidatePasswordFile(1, testCase), "Policy 1")
+}
+
+func TestDay2Pt1(t *testing.T) {
+	assert.Equal(t, 416, ValidatePasswordFile(0, day2Input))
+}
+
+func TestDay2Pt2(t *testing.T) {
+	assert.Equal(t, 688, ValidatePasswordFile(1, day2Input))
 }
