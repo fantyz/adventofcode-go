@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func init() { puzzles["3"] = Day3 }
+func init() { days["3"] = Day3 }
 
 /*
 --- Day 3: Toboggan Trajectory ---

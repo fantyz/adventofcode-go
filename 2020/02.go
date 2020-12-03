@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func init() { puzzles["2"] = Day2 }
+func init() { days["2"] = Day2 }
 
 /*
 --- Day 2: Password Philosophy ---
@@ -60,7 +60,7 @@ func Day2() {
 func ValidatePasswordFile(policy int, in string) int {
 	re := regexp.MustCompile(`^([0-9]+)-([0-9]+) ([a-z]+): ([a-z]+)$`)
 
-	validators := []func(int,int,string,string)bool{ValidatePassword, ValidatePassword2}
+	validators := []func(int, int, string, string) bool{ValidatePassword, ValidatePassword2}
 	if policy < 0 || policy > len(validators) {
 		panic("unknown policy")
 	}
@@ -103,12 +103,12 @@ func ValidatePassword2(min, max int, seq string, pass string) bool {
 		panic("policy only support seq length of exactly 1")
 	}
 	// min and max is 1-indexed - lets zero index them
-	min = min-1
+	min = min - 1
 	if min < 0 || min >= len(pass) {
 		return false
 	}
 
-	max = max-1
+	max = max - 1
 	if max < 0 || max >= len(pass) {
 		return false
 	}

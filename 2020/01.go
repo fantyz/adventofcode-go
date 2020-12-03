@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func init() { puzzles["1"] = Day1 }
+func init() { days["1"] = Day1 }
 
 /*
 --- Day 1: Report Repair ---
