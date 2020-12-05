@@ -222,7 +222,6 @@ func LoadPassports(data []map[string]string) []Passport {
 // if the batch entry contains any invalid data.
 func LoadPassport(entry map[string]string) (Passport, error) {
 	var err error
-
 	p := Passport{}
 	for k, v := range entry {
 		switch k {
@@ -252,7 +251,7 @@ func LoadPassport(entry map[string]string) (Passport, error) {
 			}
 		case "hgt":
 			if len(v) < 3 {
-				return Passport{}, errors.Wrapf(err, "invalid hgt length (value=%s)", v)
+				return Passport{}, errors.Errorf("invalid hgt length (value=%s)", v)
 			}
 			p.Height, err = strconv.Atoi(v[:len(v)-2])
 			if err != nil {
