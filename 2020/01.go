@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/pkg/errors"
 )
 
 func init() { days["1"] = Day1 }
@@ -45,10 +49,27 @@ Your puzzle answer was 49214880.
 */
 
 func Day1() {
-	fmt.Println("Day 1: Report Repair")
-	vals := LoadInts(day1Input)
-	fmt.Println("Expense 2 reports that sum to 2020 multiplied:", Find2ExpenseReportEntriesMultiplied(vals))
-	fmt.Println("Expense 3 reports that sum to 2020 multiplied:", Find3ExpenseReportEntriesMultiplied(vals))
+	fmt.Println("--- Day 1: Report Repair ---")
+	vals, err := LoadInts(day1Input)
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "Unable to load input"))
+		return
+	}
+
+	fmt.Println("  Expense 2 reports that sum to 2020 multiplied:", Find2ExpenseReportEntriesMultiplied(vals))
+	fmt.Println("  Expense 3 reports that sum to 2020 multiplied:", Find3ExpenseReportEntriesMultiplied(vals))
+}
+
+func LoadInts(in string) ([]int, error) {
+	var v []int
+	for _, s := range strings.Split(in, "\n") {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to convert %s to int", s)
+		}
+		v = append(v, i)
+	}
+	return v, nil
 }
 
 func Find2ExpenseReportEntriesMultiplied(values []int) int {
@@ -63,7 +84,7 @@ func Find2ExpenseReportEntriesMultiplied(values []int) int {
 			}
 		}
 	}
-	panic("No expense report entries found")
+	return 0
 }
 
 func Find3ExpenseReportEntriesMultiplied(values []int) int {
@@ -82,5 +103,5 @@ func Find3ExpenseReportEntriesMultiplied(values []int) int {
 			}
 		}
 	}
-	panic("No expense report entries found")
+	return 0
 }
