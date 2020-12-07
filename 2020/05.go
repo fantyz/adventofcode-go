@@ -62,7 +62,7 @@ Your puzzle answer was 548.
 */
 
 func Day5() {
-	fmt.Println("Day 5: Binary Boarding")
+	fmt.Println("--- Day 5: Binary Boarding ---")
 	fmt.Println("  Highest seat ID:", HighestSeatID(day5Input))
 	fmt.Println("    Empty seat ID:", FindEmptySeat(day5Input))
 }

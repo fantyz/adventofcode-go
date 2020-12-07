@@ -80,8 +80,8 @@ Your puzzle answer was 9406609920.
 */
 
 func Day3() {
-	fmt.Println("Day 3: Toboggan Trajectory")
-	fmt.Println("                               Trees encountered:", TraverseForestWithRoutes(day3Input, []Route{{3, 1}}))
+	fmt.Println("--- Day 3: Toboggan Trajectory ---")
+	fmt.Println("  Trees encountered:", TraverseForestWithRoutes(day3Input, []Route{{3, 1}}))
 	fmt.Println("  Trees encountered multipled across many routes:", TraverseForestWithRoutes(day3Input, []Route{{1, 1}, {3, 1}, {5, 1}, {7, 1}, {1, 2}}))
 }
 
