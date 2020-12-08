@@ -22,7 +22,10 @@ func TestBootCodeRun(t *testing.T) {
 	for n, c := range testCases {
 		e, err := NewBootCodeExecuter(c.Program, c.Debugger)
 		if assert.NoError(t, err, n) {
-			assert.Equal(t, c.Acc, e.Run(), n)
+			acc, err := e.Run()
+			if assert.NoError(t, err, n) {
+				assert.Equal(t, c.Acc, acc, n)
+			}
 		}
 	}
 }
@@ -46,7 +49,10 @@ acc +6`
 func TestDay8Pt1(t *testing.T) {
 	e, err := NewBootCodeExecuter(day8Input, &HaltOnFirstRepetitionDebugger{})
 	if assert.NoError(t, err) {
-		assert.Equal(t, 1317, e.Run())
+		acc, err := e.Run()
+		if assert.NoError(t, err) {
+			assert.Equal(t, 1317, acc)
+		}
 	}
 }
 

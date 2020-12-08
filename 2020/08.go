@@ -103,8 +103,13 @@ func Day8() {
 		fmt.Println(errors.Wrap(err, "Failed to create executor"))
 		return
 	}
-	fmt.Println("  Accumulator when an instruction would be run the second time:", e.Run())
-	acc, err := FindWorkingBootCodeProgram(day8Input)
+	acc, err := e.Run()
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "Failed to run program"))
+	}
+	fmt.Println("  Accumulator when an instruction would be run the second time:", acc)
+
+	acc, err = FindWorkingBootCodeProgram(day8Input)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -135,10 +140,11 @@ func FindWorkingBootCodeProgram(program string) (int, error) {
 			continue
 		}
 
-		acc := e.Run()
-		if e.pc >= len(e.program) {
-			// program exited normally, working program found!
-			return acc, nil
+		if acc, err := e.Run(); err == nil {
+			if e.pc >= len(e.program) {
+				// program exited normally, working program found!
+				return acc, nil
+			}
 		}
 
 		// program looped, reset instruction and executor
@@ -198,17 +204,26 @@ type BootCodeExecuter struct {
 	program     []BootCodeInst
 }
 
-// Run executes the the program.
-func (e *BootCodeExecuter) Run() int {
-	for e.pc >= 0 && e.pc < len(e.program) {
+// Run executes the the program. A program is supposed to terminate once it reach the instruction
+// that would be immidiately after the last one provided with the program. Once it terminates, it
+// will return the value of the accumulator as its return value. An error will be returned if
+// any other instructions outside the program is attempted executed.
+func (e *BootCodeExecuter) Run() (int, error) {
+	for e.pc >= 0 && e.pc <= len(e.program) {
+		if e.pc == len(e.program) {
+			// all done
+			return e.accumulator, nil
+		}
+
 		if e.debugger != nil {
 			if e.debugger.RunPreExec(e) {
-				return e.accumulator
+				return e.accumulator, nil
 			}
 		}
 		e.pc = e.program[e.pc].Execute(e)
 	}
-	return e.accumulator
+
+	return 0, errors.Errorf("no instruction exist (pc=%d, programLength=%d)", e.pc, len(e.program))
 }
 
 // Reset resets BootCodeExecutor to allow running it again.
