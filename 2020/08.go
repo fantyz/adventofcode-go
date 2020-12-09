@@ -134,7 +134,7 @@ func FindWorkingBootCodeProgram(program string) (int, error) {
 		case JmpBootCode:
 			e.program[i] = NopBootCode{N: inst.Offset}
 		case NopBootCode:
-			e.program[i] = JmpBootCode{PC: &e.pc, Offset: inst.N}
+			e.program[i] = JmpBootCode{Offset: inst.N}
 		default:
 			// nothing to replace, skip
 			continue
@@ -161,8 +161,6 @@ func FindWorkingBootCodeProgram(program string) (int, error) {
 func NewBootCodeExecuter(program string, debugger Debugger) (*BootCodeExecuter, error) {
 	instExp := regexp.MustCompile(`^([a-z]+) ([+\-0-9]+)$`)
 
-	e := BootCodeExecuter{}
-
 	var instructions []BootCodeInst
 	for _, line := range strings.Split(program, "\n") {
 		m := instExp.FindStringSubmatch(line)
@@ -178,9 +176,9 @@ func NewBootCodeExecuter(program string, debugger Debugger) (*BootCodeExecuter, 
 		var inst BootCodeInst
 		switch m[1] {
 		case "acc":
-			inst = AccBootCode{Acc: &e.accumulator, N: arg}
+			inst = AccBootCode{N: arg}
 		case "jmp":
-			inst = JmpBootCode{PC: &e.pc, Offset: arg}
+			inst = JmpBootCode{Offset: arg}
 		case "nop":
 			inst = NopBootCode{N: arg}
 		default:
@@ -190,14 +188,13 @@ func NewBootCodeExecuter(program string, debugger Debugger) (*BootCodeExecuter, 
 		instructions = append(instructions, inst)
 	}
 
-	e.program = instructions
-
+	e := &BootCodeExecuter{program: instructions}
 	if debugger != nil {
-		debugger.Init(&e)
+		debugger.Init(e)
 		e.debugger = debugger
 	}
 
-	return &e, nil
+	return e, nil
 }
 
 type BootCodeExecuter struct {
@@ -223,11 +220,7 @@ func (e *BootCodeExecuter) Run() (int, error) {
 				return e.accumulator, nil
 			}
 		}
-
-		// first increase the pc to the expected instruction following this one to allow
-		// instructions to modify it (eg. jmp) before executing the current one.
-		e.pc++
-		e.program[e.pc-1].Execute()
+		e.pc = e.program[e.pc].Execute(e)
 	}
 
 	return 0, errors.Errorf("no instruction exist (pc=%d, programLength=%d)", e.pc, len(e.program))
@@ -249,32 +242,33 @@ func (e *BootCodeExecuter) Reset() {
 // with the exeecutor as an argument and expects this function to return the index to the
 // following instruction (usually the BootCodeExecutor pc value + 1).
 type BootCodeInst interface {
-	Execute()
+	Execute(*BootCodeExecuter) int
 }
 
 type AccBootCode struct {
-	Acc *int
-	N   int
+	N int
 }
 
-func (inst AccBootCode) Execute() {
-	*inst.Acc += inst.N
+func (inst AccBootCode) Execute(e *BootCodeExecuter) int {
+	e.accumulator += inst.N
+	return e.pc + 1
 }
 
 type JmpBootCode struct {
-	PC     *int
 	Offset int
 }
 
-func (inst JmpBootCode) Execute() {
-	*inst.PC += inst.Offset - 1 // minus 1 to offset that pc points to the next instruction already
+func (inst JmpBootCode) Execute(e *BootCodeExecuter) int {
+	return e.pc + inst.Offset
 }
 
 type NopBootCode struct {
 	N int
 }
 
-func (_ NopBootCode) Execute() {}
+func (_ NopBootCode) Execute(e *BootCodeExecuter) int {
+	return e.pc + 1
+}
 
 // Debuggers
 //
