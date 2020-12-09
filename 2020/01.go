@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -58,18 +56,6 @@ func Day1() {
 
 	fmt.Println("  Expense 2 reports that sum to 2020 multiplied:", Find2ExpenseReportEntriesMultiplied(vals))
 	fmt.Println("  Expense 3 reports that sum to 2020 multiplied:", Find3ExpenseReportEntriesMultiplied(vals))
-}
-
-func LoadInts(in string) ([]int, error) {
-	var v []int
-	for _, s := range strings.Split(in, "\n") {
-		i, err := strconv.Atoi(s)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to convert %s to int", s)
-		}
-		v = append(v, i)
-	}
-	return v, nil
 }
 
 func Find2ExpenseReportEntriesMultiplied(values []int) int {
