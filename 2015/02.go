@@ -39,7 +39,7 @@ Your puzzle answer was 3812909.
 */
 
 func Day2() {
-	fmt.Println("Day 2: I Was Told There Would Be No Math")
+	fmt.Println("--- Day 2: I Was Told There Would Be No Math ---")
 	paperNeeded, ribbonNeeded, err := WrapBoxes(day2Input)
 	if err != nil {
 		panic(err)

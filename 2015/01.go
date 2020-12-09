@@ -42,7 +42,7 @@ Your puzzle answer was 1797.
 */
 
 func Day1() {
-	fmt.Println("Day 1: Not Quite Lisp")
+	fmt.Println("--- Day 1: Not Quite Lisp ---")
 	finalFloor, firstBasementIdx := DeliverPresents(day1Input)
 	fmt.Println("          Final floor after delivering presents:", finalFloor)
 	fmt.Println("  First time entering basement happens at index:", firstBasementIdx)

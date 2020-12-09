@@ -26,7 +26,7 @@ Your puzzle answer was 9958218.
 */
 
 func Day4() {
-	fmt.Println("Day 4: The Ideal Stocking Stuffer")
+	fmt.Println("--- Day 4: The Ideal Stocking Stuffer ---")
 	fmt.Println("  First number for key to provide a 5-zero AdventCoin:", MineAdventCoin(day4input, 5))
 	fmt.Println("  First number for key to provide a 6-zero AdventCoin:", MineAdventCoin(day4input, 6))
 }

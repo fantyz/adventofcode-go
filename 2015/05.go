@@ -46,7 +46,7 @@ Your puzzle answer was 69.
 */
 
 func Day5() {
-	fmt.Println("Day 5: Doesn't He Have Intern-Elves For This?")
+	fmt.Println("--- Day 5: Doesn't He Have Intern-Elves For This? ---")
 	fmt.Println("   Nice strings:", NiceStrings(day5Input))
 	fmt.Println("  Nicer strings:", NicerStrings(day5Input))
 }

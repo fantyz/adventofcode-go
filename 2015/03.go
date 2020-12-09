@@ -37,7 +37,7 @@ Your puzzle answer was 2341.
 */
 
 func Day3() {
-	fmt.Println("Day 3: Perfectly Spherical Houses in a Vacuum")
+	fmt.Println("--- Day 3: Perfectly Spherical Houses in a Vacuum ---")
 	totalVisited, err := DistributePresentsToHouses(1, day3Input)
 	if err != nil {
 		panic(err)
