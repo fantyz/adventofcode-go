@@ -199,26 +199,27 @@ func AdapterCombinations(in []int) int {
 		return 1 // strictly speaking we should verify they actually connect to each other and we shouldn't return 0 here
 	}
 
-	var adapters []int
+	// make a copy of the adapters to avoid mutations done to it causing side effects
+	adapters := make([]int, len(in))
 	copy(adapters, in)
 
 	// add outlet and make sure the adapters are sorted
-	in = append(in, 0)
-	sort.Ints(in)
+	adapters = append(adapters, 0)
+	sort.Ints(adapters)
 
 	// keep track of how many combinations a given adapter has from it to the device
 	p := map[int]int{
-		in[len(in)-2]: 1,
-		in[len(in)-1]: 1,
+		adapters[len(adapters)-2]: 1,
+		adapters[len(adapters)-1]: 1,
 	}
 
 	// count the possible combinations from i to the device by adding up the possible combinations it can connect up to
-	for i := len(in) - 2; i >= 0; i-- {
+	for i := len(adapters) - 2; i >= 0; i-- {
 		combos := 0
-		for j := i + 1; j < len(in) && in[j]-in[i] <= 3; j++ {
-			combos += p[in[j]]
+		for j := i + 1; j < len(adapters) && adapters[j]-adapters[i] <= 3; j++ {
+			combos += p[adapters[j]]
 		}
-		p[in[i]] = combos
+		p[adapters[i]] = combos
 	}
 
 	return p[0]
