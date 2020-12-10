@@ -168,12 +168,16 @@ func Day10() {
 // the number of 3-jolt diffrences. JoltDifference will return an error if it is not possible to connect
 // the device with the outlet given the adapters available.
 func JoltDifference(in []int) (int, error) {
+	// make a copy of the adapters to avoid mutations done to it causing side effects
+	adapters := make([]int, len(in))
+	copy(adapters, in)
+
 	diff1 := 0
 	diff3 := 1 // device at the end of adapter chain is always at a 3 jolts difference
 
 	prev := 0
-	sort.Ints(in)
-	for _, adapter := range in {
+	sort.Ints(adapters)
+	for _, adapter := range adapters {
 		switch adapter - prev {
 		case 1:
 			diff1++
