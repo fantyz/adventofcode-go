@@ -217,7 +217,8 @@ func AdapterCombinations(in []int) int {
 		adapters[len(adapters)-1]: 1,
 	}
 
-	// count the possible combinations from i to the device by adding up the possible combinations it can connect up to
+	// populate the p map by iterating through the list of adapters from the back and count the possible combinations
+	// from i to the device by adding up the possible combinations it can connect up to
 	for i := len(adapters) - 2; i >= 0; i-- {
 		combos := 0
 		for j := i + 1; j < len(adapters) && adapters[j]-adapters[i] <= 3; j++ {
