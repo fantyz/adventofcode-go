@@ -53,3 +53,14 @@ func TestDay10Pt2(t *testing.T) {
 		assert.Equal(t, 2024782584832, AdapterCombinations(in))
 	}
 }
+
+func BenchmarkAdapterCombinations(b *testing.B) {
+	in, err := LoadInts(day10Input)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	for n := 0; n < b.N; n++ {
+		_ = AdapterCombinations(in)
+	}
+}
