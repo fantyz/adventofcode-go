@@ -69,3 +69,13 @@ func TestDay11Pt1(t *testing.T) {
 func TestDay11Pt2(t *testing.T) {
 	assert.Equal(t, 2149, NewSeatLayout(day11Input).StabilizeSeats(-1, 5))
 }
+
+func BenchmarkStabilizeSeats(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		b.StopTimer()
+		l := NewSeatLayout(day11Input)
+		b.StartTimer()
+
+		_ = l.StabilizeSeats(-1, 5)
+	}
+}
