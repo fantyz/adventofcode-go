@@ -7,7 +7,7 @@ The puzzles have been solved with focus on writing easy to read, clean and simpl
 Some puzzles are just more fun to solve than others. These are the most memorable ones:
 
 * [Day 8: Handheld Halting](08.go): Debugging a BoodCode program.
-
+* [Day 13: Shuttle Search](13.go): Finding patterns in bus schedules.
 
 ## File Structure
 
