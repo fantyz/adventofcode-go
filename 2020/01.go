@@ -48,7 +48,7 @@ Your puzzle answer was 49214880.
 
 func Day1() {
 	fmt.Println("--- Day 1: Report Repair ---")
-	vals, err := LoadInts(day1Input)
+	vals, err := LoadInts(day1Input, "\n")
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "Unable to load input"))
 		return

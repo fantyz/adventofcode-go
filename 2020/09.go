@@ -95,7 +95,7 @@ Your puzzle answer was 13414198.
 
 func Day9() {
 	fmt.Println("--- Day 9: Encoding Error ---")
-	input, err := LoadInts(day9Input)
+	input, err := LoadInts(day9Input, "\n")
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "unable to load input"))
 		return

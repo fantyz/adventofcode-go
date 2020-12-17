@@ -17,7 +17,7 @@ func TestFindSecondXMASWeakness(t *testing.T) {
 }
 
 func TestDay9(t *testing.T) {
-	input, err := LoadInts(day9Input)
+	input, err := LoadInts(day9Input, "\n")
 	if assert.NoError(t, err) {
 		weak := FindFirstXMASWeakness(25, input)
 		if assert.GreaterOrEqual(t, weak, 0) {

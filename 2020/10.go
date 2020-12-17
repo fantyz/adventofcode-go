@@ -150,7 +150,7 @@ Your puzzle answer was 2024782584832.
 
 func Day10() {
 	fmt.Println("--- Day 10: Adapter Array ---")
-	input, err := LoadInts(day10Input)
+	input, err := LoadInts(day10Input, "\n")
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "unable to load input"))
 		return

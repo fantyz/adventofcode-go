@@ -17,14 +17,14 @@ func TestFind3ExpenseReportEntriesMultiplied(t *testing.T) {
 }
 
 func TestDay1Pt1(t *testing.T) {
-	ints, err := LoadInts(day1Input)
+	ints, err := LoadInts(day1Input, "\n")
 	if assert.NoError(t, err) {
 		assert.Equal(t, 1020099, Find2ExpenseReportEntriesMultiplied(ints))
 	}
 }
 
 func TestDay1Pt2(t *testing.T) {
-	ints, err := LoadInts(day1Input)
+	ints, err := LoadInts(day1Input, "\n")
 	if assert.NoError(t, err) {
 		assert.Equal(t, 49214880, Find3ExpenseReportEntriesMultiplied(ints))
 	}

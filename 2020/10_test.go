@@ -38,7 +38,7 @@ func TestAdapterCombinations(t *testing.T) {
 }
 
 func TestDay10Pt1(t *testing.T) {
-	in, err := LoadInts(day10Input)
+	in, err := LoadInts(day10Input, "\n")
 	if assert.NoError(t, err) {
 		diff, err := JoltDifference(in)
 		if assert.NoError(t, err) {
@@ -48,14 +48,14 @@ func TestDay10Pt1(t *testing.T) {
 }
 
 func TestDay10Pt2(t *testing.T) {
-	in, err := LoadInts(day10Input)
+	in, err := LoadInts(day10Input, "\n")
 	if assert.NoError(t, err) {
 		assert.Equal(t, 2024782584832, AdapterCombinations(in))
 	}
 }
 
 func BenchmarkAdapterCombinations(b *testing.B) {
-	in, err := LoadInts(day10Input)
+	in, err := LoadInts(day10Input, "\n")
 	if err != nil {
 		b.Fatal(err)
 	}

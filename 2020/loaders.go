@@ -7,9 +7,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-func LoadInts(in string) ([]int, error) {
+func LoadInts(in string, split string) ([]int, error) {
 	var v []int
-	for _, s := range strings.Split(in, "\n") {
+	for _, s := range strings.Split(in, split) {
 		i, err := strconv.Atoi(s)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to convert %s to int", s)
