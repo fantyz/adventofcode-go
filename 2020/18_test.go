@@ -33,7 +33,15 @@ func TestEvaluate(t *testing.T) {
 }
 
 func TestDay18Pt1(t *testing.T) {
+	sum, err := SumExpressions(day18Input, true)
+	if assert.NoError(t, err) {
+		assert.Equal(t, 1890866893020, sum)
+	}
 }
 
 func TestDay18Pt2(t *testing.T) {
+	sum, err := SumExpressions(day18Input, false)
+	if assert.NoError(t, err) {
+		assert.Equal(t, 34646237037193, sum)
+	}
 }
