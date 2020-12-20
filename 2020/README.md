@@ -17,6 +17,9 @@ Some puzzles have ended up with solutions that leave a bit to be desired still. 
   * Benchmark map solution against an array solution to better understand the difference.
   * Create a generic n-dimensional solver instead of having 2 almost identical solutions.
   * Cubes only activate/deactivate based on being adjacent to an active cube - use that to avoid iterating over the entire pocket universe and only look at cubes adjacant to already activated cubes when running a cycle.
+* [Day 19: Monster Messages](19.go):
+  * Get rid of the error returned by `Match` in the `MessageRule` interface.
+  * Create a solution that can handle loops properly and avoid the needed hacks for part 2.
 
 I started noting these down late, so quite a few ideas might not be present here.
 
