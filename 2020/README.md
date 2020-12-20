@@ -19,6 +19,7 @@ Some puzzles have ended up with solutions that leave a bit to be desired still. 
   * Cubes only activate/deactivate based on being adjacent to an active cube - use that to avoid iterating over the entire pocket universe and only look at cubes adjacant to already activated cubes when running a cycle.
 * [Day 19: Monster Messages](19.go):
   * Get rid of the error returned by `Match` in the `MessageRule` interface.
+  * Fix `OrMessageRule` to pick the most greedy match when both sides matches - so the order of the left and right hand side of the or-rule won't need to be manually switched around to get it to work.
   * Create a solution that can handle loops properly and avoid the needed hacks for part 2.
 
 I started noting these down late, so quite a few ideas might not be present here.
