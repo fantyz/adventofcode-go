@@ -8,6 +8,7 @@ Some puzzles are just more fun to solve than others. These are the most memorabl
 
 * [Day 8: Handheld Halting](08.go): Debugging a BoodCode program.
 * [Day 13: Shuttle Search](13.go): Finding patterns in bus schedules.
+* [Day 20: Jurassic Jigsaw](20.go): Automated jigsaw solving and monster hunting.
 
 ## Room For Improvement
 
