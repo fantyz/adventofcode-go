@@ -22,6 +22,11 @@ Some puzzles have ended up with solutions that leave a bit to be desired still. 
   * Get rid of the error returned by `Match` in the `MessageRule` interface.
   * Fix `OrMessageRule` to pick the most greedy match when both sides matches - so the order of the left and right hand side of the or-rule won't need to be manually switched around to get it to work.
   * Create a solution that can handle loops properly and avoid the needed hacks for part 2.
+* [Day 22: Crab Combat](22.go):
+  * Improve the way we check if the current state of the game is one we have seen before
+    * Keep the previous states sorted and search through them to determine if it has been seen before/insert.
+    * Consider minimizing the data needed to represent the state of the decks. One approach could be encoding multipe cards into one uint value (highest value card in input is 50 which needs 6 bits - that would allow us to store 10 cards in a single 64 bit value).
+    * Consider if we can be smarter about when we need to check the previous game states - eg. p1 has a deck of 25 cards; it would take at minimum 25 cards to get back to this state again which means there would be no need to check until then.
 
 I started noting these down late, so quite a few ideas might not be present here.
 
