@@ -12,7 +12,6 @@ import (
 func init() { days["8"] = Day8 }
 
 /*
-
 --- Day 8: Handheld Halting ---
 Your flight to the major airline hub reaches cruising altitude without incident. While you consider checking the in-flight menu for one of those drinks that come with a little umbrella, you are interrupted by the kid sitting next to you.
 
@@ -93,7 +92,6 @@ After the last instruction (acc +6), the program terminates by attempting to run
 Fix the program so that it terminates normally by changing exactly one jmp (to nop) or nop (to jmp). What is the value of the accumulator after the program terminates?
 
 Your puzzle answer was 1033.
-
 */
 
 func Day8() {
@@ -107,14 +105,14 @@ func Day8() {
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "Failed to run program"))
 	}
-	fmt.Println("  Accumulator when an instruction would be run the second time:", acc)
+	fmt.Println("Accumulator when an instruction would be run the second time:", acc)
 
 	acc, err = FindWorkingBootCodeProgram(day8Input)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("  Accumulator after finding a working program:", acc)
+	fmt.Println("Accumulator after finding a working program:", acc)
 }
 
 // FindWorkingBootCodeProgram takes a program and modifies it by swapping Nop with Jmp and

@@ -54,8 +54,8 @@ func Day1() {
 		return
 	}
 
-	fmt.Println("  Expense 2 reports that sum to 2020 multiplied:", Find2ExpenseReportEntriesMultiplied(vals))
-	fmt.Println("  Expense 3 reports that sum to 2020 multiplied:", Find3ExpenseReportEntriesMultiplied(vals))
+	fmt.Println("Expense 2 reports that sum to 2020 multiplied:", Find2ExpenseReportEntriesMultiplied(vals))
+	fmt.Println("Expense 3 reports that sum to 2020 multiplied:", Find3ExpenseReportEntriesMultiplied(vals))
 }
 
 func Find2ExpenseReportEntriesMultiplied(values []int) int {

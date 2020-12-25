@@ -160,8 +160,8 @@ func Day10() {
 		fmt.Println(errors.Wrap(err, "failed to find jolt difference"))
 		return
 	}
-	fmt.Println("  1-jolt multiplied by 3-jolt difference of adapter chain:", diff)
-	fmt.Println("  Distinct ways the addapters can be arranged:", AdapterCombinations(input))
+	fmt.Println("1-jolt multiplied by 3-jolt difference of adapter chain:", diff)
+	fmt.Println("Distinct ways the addapters can be arranged:", AdapterCombinations(input))
 }
 
 // JoltDifference takes a list of adapters and returns the number of 1-jolt differences multiplied with

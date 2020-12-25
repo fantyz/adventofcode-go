@@ -12,7 +12,6 @@ import (
 func init() { days["7"] = Day7 }
 
 /*
-
 --- Day 7: Handy Haversacks ---
 You land at the regional airport in time for your next flight. In fact, it looks like you'll even have time to grab some food: all flights are currently delayed due to issues in luggage processing.
 
@@ -72,7 +71,6 @@ In this example, a single shiny gold bag must contain 126 other bags.
 How many individual bags are required inside your single shiny gold bag?
 
 Your puzzle answer was 10875.
-
 */
 
 func Day7() {
@@ -82,8 +80,8 @@ func Day7() {
 		fmt.Println(errors.Wrap(err, "Unable to create BagRules"))
 		return
 	}
-	fmt.Println("  Bag colors that can contain at least one shiny gold bag:", len(r.AllCanContain("shiny gold")))
-	fmt.Println("  Bags within a shiny gold bag:", r.BagsWithin("shiny gold"))
+	fmt.Println("Bag colors that can contain at least one shiny gold bag:", len(r.AllCanContain("shiny gold")))
+	fmt.Println("Bags within a shiny gold bag:", r.BagsWithin("shiny gold"))
 }
 
 type BagCount struct {

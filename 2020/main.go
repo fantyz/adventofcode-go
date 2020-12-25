@@ -17,7 +17,7 @@ func main() {
 	timedDay := func(day func()) {
 		ts := time.Now()
 		day()
-		fmt.Println("Time taken:", time.Since(ts))
+		fmt.Printf("[Time taken: %v]", time.Since(ts))
 	}
 
 	if len(os.Args) == 2 {

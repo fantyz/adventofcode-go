@@ -9,7 +9,6 @@ import (
 func init() { days["9"] = Day9 }
 
 /*
-
 --- Day 9: Encoding Error ---
 With your neighbor happily enjoying their video game, you turn your attention to an open data port on the little screen in the seat in front of you.
 
@@ -90,7 +89,6 @@ To find the encryption weakness, add together the smallest and largest number in
 What is the encryption weakness in your XMAS-encrypted list of numbers?
 
 Your puzzle answer was 13414198.
-
 */
 
 func Day9() {
@@ -101,8 +99,8 @@ func Day9() {
 		return
 	}
 	weak := FindFirstXMASWeakness(25, input)
-	fmt.Println("  First XMAS weakness:", input[weak])
-	fmt.Println("  Secomd XMAS weakness:", FindSecondXMASWeakness(weak, input))
+	fmt.Println("First XMAS weakness:", input[weak])
+	fmt.Println("Secomd XMAS weakness:", FindSecondXMASWeakness(weak, input))
 }
 
 // FindFirstXMASWeakness takes a preamble (length of sequence of initial numbers) and

@@ -128,8 +128,8 @@ func Day13() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("  The earliest bus:", EarliestBus(ts, busses))
-	fmt.Println("  The earliest timestamp where all busses leaves within a minute of each other:", EarliestTimestampWith1MinuteDelay(busses))
+	fmt.Println("The earliest bus:", EarliestBus(ts, busses))
+	fmt.Println("The earliest timestamp where all busses leaves within a minute of each other:", EarliestTimestampWith1MinuteDelay(busses))
 }
 
 // LoadTimestampAndBusses takes the raw input containing a timestamp and a list of busses and

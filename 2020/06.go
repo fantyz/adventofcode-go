@@ -88,8 +88,8 @@ Your puzzle answer was 3143.
 
 func Day6() {
 	fmt.Println("--- Day 6: Custom Customs ---")
-	fmt.Println("  Yes count for all groups (any):", ProcessAllForms(day6Input, true))
-	fmt.Println("  Yes count for all groups (all):", ProcessAllForms(day6Input, false))
+	fmt.Println("Yes count for all groups (any):", ProcessAllForms(day6Input, true))
+	fmt.Println("Yes count for all groups (all):", ProcessAllForms(day6Input, false))
 }
 
 // ProcessAllForms takes forms data and counts the amount of yes answers among these. It returns the number

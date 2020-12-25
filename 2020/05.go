@@ -63,8 +63,8 @@ Your puzzle answer was 548.
 
 func Day5() {
 	fmt.Println("--- Day 5: Binary Boarding ---")
-	fmt.Println("  Highest seat ID:", HighestSeatID(day5Input))
-	fmt.Println("    Empty seat ID:", FindEmptySeat(day5Input))
+	fmt.Println("Highest seat ID:", HighestSeatID(day5Input))
+	fmt.Println("Empty seat ID:", FindEmptySeat(day5Input))
 }
 
 // FindEmptySeat takes a list of seats and returns the first empty seatID found where both seatID-1

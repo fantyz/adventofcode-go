@@ -205,8 +205,8 @@ Your puzzle answer was 2149.
 
 func Day11() {
 	fmt.Println("--- Day 11: Seating System ---")
-	fmt.Println("  Seats occupied after stabilizing (view distance=1, min adjacent=4):", NewSeatLayout(day11Input).StabilizeSeats(1, 4))
-	fmt.Println("  Seats occupied after stabilizing (view distance=-1, min adjacent=5):", NewSeatLayout(day11Input).StabilizeSeats(-1, 5))
+	fmt.Println("Seats occupied after stabilizing (view distance=1, min adjacent=4):", NewSeatLayout(day11Input).StabilizeSeats(1, 4))
+	fmt.Println("Seats occupied after stabilizing (view distance=-1, min adjacent=5):", NewSeatLayout(day11Input).StabilizeSeats(-1, 5))
 }
 
 type SeatLayout [][]byte

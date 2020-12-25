@@ -129,8 +129,8 @@ Your puzzle answer was 150.
 func Day4() {
 	fmt.Println("--- Day 4: Passport Processing ---")
 	batch := LoadPassportBatch(day4Input)
-	fmt.Println("  Passports containing required fields:", len(batch))
-	fmt.Println("    Passports containing required data:", len(LoadPassports(batch)))
+	fmt.Println("Passports containing required fields:", len(batch))
+	fmt.Println("Passports containing required data:", len(LoadPassports(batch)))
 }
 
 // NOTE: Normally it would make more sense to combine the data validation into one step. My

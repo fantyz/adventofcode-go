@@ -53,8 +53,8 @@ Your puzzle answer was 688.
 
 func Day2() {
 	fmt.Println("--- Day 2: Password Philosophy ---")
-	fmt.Println("  Valid passwords:", ValidatePasswordFile(0, day2Input))
-	fmt.Println("  Valid passwords (new policy):", ValidatePasswordFile(1, day2Input))
+	fmt.Println("Valid passwords:", ValidatePasswordFile(0, day2Input))
+	fmt.Println("Valid passwords (new policy):", ValidatePasswordFile(1, day2Input))
 }
 
 func ValidatePasswordFile(policy int, in string) int {
