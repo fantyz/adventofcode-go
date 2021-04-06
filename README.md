@@ -2,7 +2,7 @@
 
 This repository contains my solutions for the [Advent of Code](https://adventofcode.com) puzzles implemented in Go.
 
-Do not that everything prior to 2020 is currently in a somewhat messy state. These were quick and dirty solutions that were not written with anything other than solving the puzzle in mind. A lot of days are missing as well due to lack of time over the holidays. I do plan to go over the previous years and rewrite them into more presentable solutions, but this might take a while to get around to doing.
+Note that everything prior to 2020 is currently in a somewhat messy state. These were quick and dirty solutions that were not written with anything other than solving the puzzle in mind. A lot of days are missing as well due to lack of time over the holidays. I do plan to go over the previous years and rewrite them into more presentable solutions, but this might take a while to get around to doing.
 
 ## Favorite Puzzles
 
