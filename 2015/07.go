@@ -69,18 +69,19 @@ func Day7() {
 		fmt.Println(errors.Wrap(err, "failed to resolve wire a"))
 		return
 	}
-
 	fmt.Println("Signal on wire a:", int(a))
 
-	c.Reset()
-	c.Override("b", a)
-
-	a2, err := c.ResolveWire("a")
+	c, err = NewCircuit(day7Input)
 	if err != nil {
-		fmt.Println(errors.Wrap(err, "failed to resolve wire a after override"))
+		fmt.Println(errors.Wrap(err, "unable to load input"))
 		return
 	}
-
+	c.Override("b", a)
+	a2, err := c.ResolveWire("a")
+	if err != nil {
+		fmt.Println(errors.Wrap(err, "failed to resolve wire a"))
+		return
+	}
 	fmt.Printf("Signal on wire a after overriding b to %d: %d\n", int(a), int(a2))
 }
 
@@ -169,11 +170,6 @@ func (c *Circuit) ResolveWire(wire string) (uint16, error) {
 // Override force the wire specified to the value specified
 func (c *Circuit) Override(wire string, val uint16) {
 	c.wireValues[wire] = val
-}
-
-// Reset resets all already computed wire signals
-func (c *Circuit) Reset() {
-	c.wireValues = map[string]uint16{}
 }
 
 // Gate is an interface that can resolve the output signal of itself
