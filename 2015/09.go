@@ -165,21 +165,20 @@ func (d Distances) findRouteVisitingAllRecursive(routeType RouteType, from strin
 			dist += d[from][remainingLocations[i]]
 		}
 
+		var isBetter bool
 		switch routeType {
 		case ShortestRouteType:
-			if bestRouteDist < 0 || dist < bestRouteDist {
-				bestRoute = route
-				bestRouteDist = dist
-			}
+			isBetter = bestRouteDist < 0 || dist < bestRouteDist
 		case LongestRouteType:
-			if bestRouteDist < 0 || dist > bestRouteDist {
-				bestRoute = route
-				bestRouteDist = dist
-			}
+			isBetter = bestRouteDist < 0 || dist > bestRouteDist
 		default:
 			panic("unsupported route type")
 		}
 
+		if isBetter {
+			bestRoute = route
+			bestRouteDist = dist
+		}
 	}
 
 	if from != "" {
