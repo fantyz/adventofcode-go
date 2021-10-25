@@ -57,7 +57,7 @@ func Day12() {
 
 // SumJSONDocumentNumbers takes a generic json document and sums all numbers within it.
 // SumJSONDocumentNumbers returns an error if the input document is not valid json.
-func SumJSONDocumentNumbers(doc string, ignoreRed bool) (int, error) {
+func SumJSONDocumentNumbers(doc string, ignoreRed bool) (float64, error) {
 	var d interface{}
 	if err := json.Unmarshal([]byte(doc), &d); err != nil {
 		return 0, errors.Wrap(err, "failed to json umarshal input document")
@@ -69,14 +69,14 @@ func SumJSONDocumentNumbers(doc string, ignoreRed bool) (int, error) {
 
 // sumJSONDocumentNumbersRecursively is a recursive helper function used to sum up all values in a
 // generic JSON document.
-func sumJSONDocumentNumbersRecursively(i interface{}, ignoreRed bool) (int, bool) {
+func sumJSONDocumentNumbersRecursively(i interface{}, ignoreRed bool) (float64, bool) {
 	switch v := i.(type) {
 	case float64:
 		// number value, return it
-		return int(v), false
+		return v, false
 	case []interface{}:
 		// array, sum any values in it
-		sum := 0
+		sum := 0.0
 		for i := range v {
 			v, _ := sumJSONDocumentNumbersRecursively(v[i], ignoreRed)
 			sum += v
@@ -84,7 +84,7 @@ func sumJSONDocumentNumbersRecursively(i interface{}, ignoreRed bool) (int, bool
 		return sum, false
 	case map[string]interface{}:
 		// object, sum any values in it
-		sum := 0
+		sum := 0.0
 		for i := range v {
 			v, ignore := sumJSONDocumentNumbersRecursively(v[i], ignoreRed)
 			if ignore {

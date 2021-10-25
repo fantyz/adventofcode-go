@@ -10,7 +10,7 @@ func TestSumJSONDocumentNumbers(t *testing.T) {
 	testCases := []struct {
 		Doc       string
 		IgnoreRed bool
-		Sum       int
+		Sum       float64
 	}{
 		{`[1,2,3]`, true, 6},
 		{`{"a":2,"b":4}`, false, 6},
@@ -36,13 +36,13 @@ func TestSumJSONDocumentNumbers(t *testing.T) {
 func TestDay12Pt1(t *testing.T) {
 	sum, err := SumJSONDocumentNumbers(day12Input, false)
 	if assert.NoError(t, err) {
-		assert.Equal(t, 111754, sum)
+		assert.Equal(t, 111754.0, sum)
 	}
 }
 
 func TestDay12Pt2(t *testing.T) {
 	sum, err := SumJSONDocumentNumbers(day12Input, true)
 	if assert.NoError(t, err) {
-		assert.Equal(t, 65402, sum)
+		assert.Equal(t, 65402.0, sum)
 	}
 }
