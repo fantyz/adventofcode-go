@@ -11,9 +11,9 @@ func TestShortestRouteVisitingAll(t *testing.T) {
 London to Belfast = 518
 Dublin to Belfast = 141`
 
-	d, err := NewDistances(input)
+	s, err := NewSequenceFromCityDistances(input)
 	if assert.NoError(t, err) {
-		_, dist := d.ShortestRouteVisitingAll()
+		_, dist := s.Optimize(MinimizeOptimizationType, false, false)
 		assert.Equal(t, 605, dist)
 	}
 }
@@ -23,25 +23,25 @@ func TestLongestRouteVisitingAll(t *testing.T) {
 London to Belfast = 518
 Dublin to Belfast = 141`
 
-	d, err := NewDistances(input)
+	s, err := NewSequenceFromCityDistances(input)
 	if assert.NoError(t, err) {
-		_, dist := d.LongestRouteVisitingAll()
+		_, dist := s.Optimize(MaximizeOptimizationType, false, false)
 		assert.Equal(t, 982, dist)
 	}
 }
 
 func TestDay09Pt1(t *testing.T) {
-	d, err := NewDistances(day09Input)
+	s, err := NewSequenceFromCityDistances(day09Input)
 	if assert.NoError(t, err) {
-		_, dist := d.ShortestRouteVisitingAll()
+		_, dist := s.Optimize(MinimizeOptimizationType, false, false)
 		assert.Equal(t, 117, dist)
 	}
 }
 
 func TestDay09Pt2(t *testing.T) {
-	d, err := NewDistances(day09Input)
+	s, err := NewSequenceFromCityDistances(day09Input)
 	if assert.NoError(t, err) {
-		_, dist := d.LongestRouteVisitingAll()
+		_, dist := s.Optimize(MaximizeOptimizationType, false, false)
 		assert.Equal(t, 909, dist)
 	}
 }

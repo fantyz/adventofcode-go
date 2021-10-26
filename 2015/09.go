@@ -49,31 +49,42 @@ Your puzzle answer was 909.
 
 */
 
-// IMPROVEMENT IDEA: Represent locations with integers (and provide a lookup from integer to
-// location name). This allow Distances be a [][]int instead of a map[string]map[string]int. That
-// should speed up the lookups as well as reduce the extensive amount of []string fiddling to
-// use cheaper []int.
-
 func Day9() {
 	fmt.Println("--- Day 9: All in a Single Night ---")
-	dists, err := NewDistances(day09Input)
+	seq, err := NewSequenceFromCityDistances(day09Input)
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "failed to load distances"))
 		return
 	}
-	_, shortestDist := dists.ShortestRouteVisitingAll()
+	_, shortestDist := seq.Optimize(MinimizeOptimizationType, false, false)
 	fmt.Println("Shortest route visiting all locations exactly once:", shortestDist)
-	_, longestDist := dists.LongestRouteVisitingAll()
+	_, longestDist := seq.Optimize(MaximizeOptimizationType, false, false)
 	fmt.Println("Longest route visiting all locations exactly once:", longestDist)
 }
 
-// Distances is a map that enables lookup by city to city giving the distance between the two.
-type Distances map[string]map[string]int
+// NewSequenceFromCityDistances takes the puzzle input and returns a Sequence.
+// NewSequenceFromCityDistances will return an error if the input is malformed.
+// If distances are missing between any two cities it will default to 0.
+func NewSequenceFromCityDistances(input string) (*Sequence, error) {
+	indexes := map[string]int{}
+	var elements []string
+	var distances [][]int
 
-// NewDistances takes the puzzle input and returns Distances.
-// NewDistances will return an error if the input is malformed.
-func NewDistances(input string) (Distances, error) {
-	dists := Distances{}
+	getElementIndex := func(element string) int {
+		if idx, found := indexes[element]; found {
+			return idx
+		}
+
+		// not found, add to elements and expand the distances table
+		elements = append(elements, element)
+		idx := len(elements) - 1
+		for i := range distances {
+			distances[i] = append(distances[i], 0)
+		}
+		distances = append(distances, make([]int, len(elements)))
+		indexes[element] = idx
+		return idx
+	}
 
 	distExp := regexp.MustCompile(`^([a-zA-Z]+) to ([a-zA-Z]+) = ([0-9]+)$`)
 	for _, line := range strings.Split(input, "\n") {
@@ -81,110 +92,21 @@ func NewDistances(input string) (Distances, error) {
 		if len(m) != 4 {
 			return nil, errors.Errorf("unknown line (line=%s)", line)
 		}
-		if _, found := dists[m[1]]; !found {
-			dists[m[1]] = map[string]int{}
-		}
-		if _, found := dists[m[2]]; !found {
-			dists[m[2]] = map[string]int{}
-		}
+		idx1 := getElementIndex(m[1])
+		idx2 := getElementIndex(m[2])
 		dist, err := strconv.Atoi(m[3])
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to parse distance (line=%s)", line)
 		}
-
-		// allow looking up the distance from either direction
-		dists[m[1]][m[2]] = dist
-		dists[m[2]][m[1]] = dist
+		distances[idx1][idx2] = dist
+		distances[idx2][idx1] = dist
 	}
 
-	return dists, nil
-}
-
-type RouteType int
-
-const (
-	ShortestRouteType = iota
-	LongestRouteType
-)
-
-// ShortestRouteVisitingAll returns the shortest route that visits all locations exactly once.
-func (d Distances) ShortestRouteVisitingAll() ([]string, int) {
-	return d.findRouteVisitingAllRecursive(ShortestRouteType, "", d.getLocations())
-}
-
-// LongestRouteVisitingAll returns the longest route that visits all locations exactly once.
-func (d Distances) LongestRouteVisitingAll() ([]string, int) {
-	return d.findRouteVisitingAllRecursive(LongestRouteType, "", d.getLocations())
-}
-
-// getLocations returns all possible locations
-func (d Distances) getLocations() []string {
-	locations := make([]string, 0, len(d))
-	for loc := range d {
-		locations = append(locations, loc)
-	}
-	return locations
-}
-
-// findRouteVisitingAllRecursive is a helper function to FindRouteVisitingAll. It will return the shortest
-// or longest route found in reverse ending with the from location along with the distance of this route.
-// It takes a location and starting with that location tries all possible routes to find the shortest one
-// using itself recursively.
-// If an empty string is provided as location, it will try all possible starting locations to find the
-// shortest route.
-//
-// NOTE: The caller must reverse the route to get a route that starts with the from location. If the starting
-// location doesn't matter the reverse route is just as good as the non-reversed as the distance of the route
-// will remain the same.
-func (d Distances) findRouteVisitingAllRecursive(routeType RouteType, from string, remainingLocations []string) ([]string, int) {
-	if len(remainingLocations) <= 0 {
-		if from == "" {
-			return []string{}, 0
-		}
-		return []string{from}, 0
-	}
-	if len(remainingLocations) == 1 {
-		// only one possible route
-		if from == "" {
-			return []string{remainingLocations[0]}, 0
-		}
-		return []string{remainingLocations[0], from}, d[from][remainingLocations[0]]
+	seq, err := NewSequence(elements, distances)
+	if err != nil {
+		// should not be possible
+		panic(errors.Wrap(err, "unable to create new sequence"))
 	}
 
-	// using each possible remainingLocations as the next from location and call itself recurively
-	var bestRoute []string
-	bestRouteDist := -1
-	for i := range remainingLocations {
-		newRemainingLocations := make([]string, len(remainingLocations)-1)
-		copy(newRemainingLocations, remainingLocations[:i])
-		copy(newRemainingLocations[i:], remainingLocations[i+1:])
-		route, dist := d.findRouteVisitingAllRecursive(routeType, remainingLocations[i], newRemainingLocations)
-
-		if from != "" {
-			// adjust distance to include the distance between from and the first location in the route
-			dist += d[from][remainingLocations[i]]
-		}
-
-		var isBetter bool
-		switch routeType {
-		case ShortestRouteType:
-			isBetter = bestRouteDist < 0 || dist < bestRouteDist
-		case LongestRouteType:
-			isBetter = bestRouteDist < 0 || dist > bestRouteDist
-		default:
-			panic("unsupported route type")
-		}
-
-		if isBetter {
-			bestRoute = route
-			bestRouteDist = dist
-		}
-	}
-
-	if from != "" {
-		// include from at the end of the best route found
-		bestRoute = append(bestRoute, from)
-	}
-
-	return bestRoute, bestRouteDist
+	return seq, nil
 }
