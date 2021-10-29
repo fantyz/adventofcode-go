@@ -56,9 +56,9 @@ func Day9() {
 		fmt.Println(errors.Wrap(err, "failed to load distances"))
 		return
 	}
-	_, shortestDist := seq.Optimize(MinimizeOptimizationType, false, false)
+	_, shortestDist := seq.Optimize(MinimizeOptimizationType, false)
 	fmt.Println("Shortest route visiting all locations exactly once:", shortestDist)
-	_, longestDist := seq.Optimize(MaximizeOptimizationType, false, false)
+	_, longestDist := seq.Optimize(MaximizeOptimizationType, false)
 	fmt.Println("Longest route visiting all locations exactly once:", longestDist)
 }
 

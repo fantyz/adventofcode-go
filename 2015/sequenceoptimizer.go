@@ -37,12 +37,9 @@ type Sequence struct {
 
 // Optimize will return the sequnce of elements that is optimized in accordance with the paramters provided
 // in regards to the distance between elements.
-// If sumBothDirections is set to false only the distance going in one direction is included in the sum. If
-// set to true both directions will be included in the sum (eg. A -> B has a distance of 1 and B -> A has a
-// distance of 2 and we maximize, Optimize would return [A,B] with a sum of 3).
 // If wrap is set to true the sequence will take into account that the distance between the last and first
 // element must be included in the distance as well.
-func (s *Sequence) Optimize(t OptimizationType, sumBothDirections bool, wrap bool) ([]string, int) {
+func (s *Sequence) Optimize(t OptimizationType, wrap bool) ([]string, int) {
 	// default from and to to any element
 	from, to := -1, -1
 	elements := s.getElementIndexes()
@@ -53,7 +50,7 @@ func (s *Sequence) Optimize(t OptimizationType, sumBothDirections bool, wrap boo
 		elements = elements[1:]
 	}
 
-	revSeq, sum := s.optimizeRecursive(t, sumBothDirections, from, to, elements)
+	revSeq, sum := s.optimizeRecursive(t, from, to, elements)
 	seq := s.reverseAndConvertToElements(revSeq)
 	if wrap && len(elements) > 0 {
 		// remove the duplicate element due to wrapping from the sequence
@@ -74,7 +71,7 @@ const (
 // is optimized according to the optimization type specified. Additionally it will return the total distance
 // of the sequence.
 // If from is set to -1 all possible starting elements will be considered to find the optimal solution.
-func (s *Sequence) optimizeRecursive(t OptimizationType, sumBoth bool, from int, to int, elmsLeft []int) ([]int, int) {
+func (s *Sequence) optimizeRecursive(t OptimizationType, from int, to int, elmsLeft []int) ([]int, int) {
 	if len(elmsLeft) <= 1 {
 		// only one possible sequence to make
 		var seq []int
@@ -92,9 +89,6 @@ func (s *Sequence) optimizeRecursive(t OptimizationType, sumBoth bool, from int,
 		dist := 0
 		for i := 0; i < len(seq)-1; i++ {
 			dist += s.distances[seq[i]][seq[i+1]]
-			if sumBoth {
-				dist += s.distances[seq[i+1]][seq[i]]
-			}
 		}
 		return seq, dist
 	}
@@ -106,13 +100,10 @@ func (s *Sequence) optimizeRecursive(t OptimizationType, sumBoth bool, from int,
 		newElmsLeft := make([]int, len(elmsLeft)-1)
 		copy(newElmsLeft, elmsLeft[:i])
 		copy(newElmsLeft[i:], elmsLeft[i+1:])
-		seq, dist := s.optimizeRecursive(t, sumBoth, elmsLeft[i], to, newElmsLeft)
+		seq, dist := s.optimizeRecursive(t, elmsLeft[i], to, newElmsLeft)
 
 		if from >= 0 {
 			dist += s.distances[from][elmsLeft[i]]
-			if sumBoth {
-				dist += s.distances[elmsLeft[i]][from]
-			}
 		}
 
 		var isBetter bool

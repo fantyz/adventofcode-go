@@ -21,7 +21,7 @@ func Day13() {
 		fmt.Println(errors.Wrap(err, "failed load seating happiness"))
 		return
 	}
-	_, happiness := seq.Optimize(MaximizeOptimizationType, true, true)
+	_, happiness := seq.Optimize(MaximizeOptimizationType, true)
 	fmt.Println("The optimal seating to maximize happiness has a total sum of:", happiness)
 
 	seq2, err := NewSequenceFromSeatingHappiness(day13Input)
@@ -31,7 +31,7 @@ func Day13() {
 	}
 	// having one additional person seated with happiness 0 to everyone has the same
 	// as not wrapping the sequence.
-	_, happiness2 := seq2.Optimize(MaximizeOptimizationType, true, false)
+	_, happiness2 := seq2.Optimize(MaximizeOptimizationType, false)
 	fmt.Println("The optimal seating to maximize happiness with myself at the table has a total sum of:", happiness2)
 }
 
@@ -77,7 +77,8 @@ func NewSequenceFromSeatingHappiness(input string) (*Sequence, error) {
 			dist = -dist
 		}
 
-		distances[idx1][idx2] = dist
+		distances[idx1][idx2] += dist
+		distances[idx2][idx1] += dist
 	}
 
 	seq, err := NewSequence(elements, distances)

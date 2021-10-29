@@ -22,7 +22,7 @@ David would gain 41 happiness units by sitting next to Carol.`
 
 	seq, err := NewSequenceFromSeatingHappiness(input)
 	if assert.NoError(t, err) {
-		_, sum := seq.Optimize(MaximizeOptimizationType, true, true)
+		_, sum := seq.Optimize(MaximizeOptimizationType, true)
 		assert.Equal(t, 330, sum)
 	}
 }
@@ -30,7 +30,7 @@ David would gain 41 happiness units by sitting next to Carol.`
 func TestDay13Pt1(t *testing.T) {
 	seq, err := NewSequenceFromSeatingHappiness(day13Input)
 	if assert.NoError(t, err) {
-		_, happiness := seq.Optimize(MaximizeOptimizationType, true, true)
+		_, happiness := seq.Optimize(MaximizeOptimizationType, true)
 		assert.Equal(t, 733, happiness)
 	}
 }
@@ -38,7 +38,7 @@ func TestDay13Pt1(t *testing.T) {
 func TestDay13Pt2(t *testing.T) {
 	seq, err := NewSequenceFromSeatingHappiness(day13Input)
 	if assert.NoError(t, err) {
-		_, happiness := seq.Optimize(MaximizeOptimizationType, true, false)
+		_, happiness := seq.Optimize(MaximizeOptimizationType, false)
 		assert.Equal(t, 725, happiness)
 	}
 }
