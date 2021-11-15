@@ -66,7 +66,7 @@ Your puzzle answer was 158.
 
 func Day21() {
 	fmt.Println("--- Day 21: RPG Simulator 20XX ---")
-	lowestToWin, highestToLoose := OptimizeRPGSimulator20XXGear(Character{
+	lowestToWin, highestToLoose := OptimizeRPGSimulator20XXGear(Warrior{
 		Hitpoints: day21InputHP,
 		Damage:    day21InputDamage,
 		Armor:     day21InputArmor,
@@ -75,7 +75,8 @@ func Day21() {
 	fmt.Println("The most expensive gear that still loose to the boss cost:", highestToLoose)
 }
 
-func RPGSimulator20XX(player, boss Character) bool {
+// RPGSimulator20XX takes a player and boss as input and returns true of the player wins and false otherwise.
+func RPGSimulator20XX(player, boss Warrior) bool {
 	player.Damage -= boss.Armor
 	if player.Damage <= 0 {
 		player.Damage = 1
@@ -97,7 +98,10 @@ func RPGSimulator20XX(player, boss Character) bool {
 	}
 }
 
-func OptimizeRPGSimulator20XXGear(boss Character) (int, int) {
+// OptimizeRPGSimulator20XXGear takes a boss and finds both the cheapest gear to buy that still
+// would win the fight as well as the most expensive gear that still would loose the fight.
+// If no combination would win/loose the fight -1 is returned respectively.
+func OptimizeRPGSimulator20XXGear(boss Warrior) (int, int) {
 	type item struct {
 		cost   int
 		damage int
@@ -146,7 +150,7 @@ func OptimizeRPGSimulator20XXGear(boss Character) (int, int) {
 					dmg := weapons[weapon].damage + armors[armor].damage + rings[ring1].damage + rings[ring2].damage
 					arm := weapons[weapon].armor + armors[armor].armor + rings[ring1].armor + rings[ring2].armor
 
-					if RPGSimulator20XX(Character{Hitpoints: 100, Damage: dmg, Armor: arm}, boss) {
+					if RPGSimulator20XX(Warrior{Hitpoints: 100, Damage: dmg, Armor: arm}, boss) {
 						if lowestCostToWin < 0 || cost < lowestCostToWin {
 							lowestCostToWin = cost
 						}
@@ -163,7 +167,8 @@ func OptimizeRPGSimulator20XXGear(boss Character) (int, int) {
 	return lowestCostToWin, highestCostToLoose
 }
 
-type Character struct {
+// Warrior represents the characters in the RPGSimulator20XX game.
+type Warrior struct {
 	Hitpoints int
 	Armor     int
 	Damage    int
