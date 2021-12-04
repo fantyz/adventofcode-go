@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 func init() { days["1"] = Day1 }
@@ -92,11 +90,7 @@ Your puzzle answer was 1805.
 
 func Day1() {
 	fmt.Println("--- Day 1: Sonar Sweep ---")
-	depths, err := LoadInts(day01Input, "\n")
-	if err != nil {
-		fmt.Println(errors.Wrap(err, "Unable to load input"))
-		return
-	}
+	depths := LoadInts(day01Input)
 	fmt.Println("Depth increases with a window size of 1:", DepthIncreases(1, depths))
 	fmt.Println("Depth increases with a window size of 3:", DepthIncreases(3, depths))
 }

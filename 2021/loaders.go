@@ -1,20 +1,36 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
-	"strings"
-
-	"github.com/pkg/errors"
 )
 
-func LoadInts(in string, split string) ([]int, error) {
+// LoadInts takes an input string and reads out any integers found in it in the order they
+// appear ignoring all other text in string.
+func LoadInts(in string) []int {
+	in += "\n" // make sure in has a non-number at the end of it
+
 	var v []int
-	for _, s := range strings.Split(in, split) {
-		i, err := strconv.Atoi(s)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to convert %s to int", s)
+
+	start := -1
+	for idx, r := range in {
+		switch r {
+		case '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			if start >= 0 {
+				continue
+			}
+			start = idx
+		default:
+			if start >= 0 {
+				n, err := strconv.Atoi(in[start:idx])
+				if err != nil {
+					// should never happen
+					panic(fmt.Sprintf("unable to convert number to int (n=%s)", in[start:idx]))
+				}
+				v = append(v, n)
+				start = -1
+			}
 		}
-		v = append(v, i)
 	}
-	return v, nil
+	return v
 }

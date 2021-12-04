@@ -30,15 +30,9 @@ func TestDepthIncreases(t *testing.T) {
 }
 
 func TestDay01Pt1(t *testing.T) {
-	depths, err := LoadInts(day01Input, "\n")
-	if assert.NoError(t, err) {
-		assert.Equal(t, 1759, DepthIncreases(1, depths))
-	}
+	assert.Equal(t, 1759, DepthIncreases(1, LoadInts(day01Input)))
 }
 
 func TestDay01Pt2(t *testing.T) {
-	depths, err := LoadInts(day01Input, "\n")
-	if assert.NoError(t, err) {
-		assert.Equal(t, 1805, DepthIncreases(3, depths))
-	}
+	assert.Equal(t, 1805, DepthIncreases(3, LoadInts(day01Input)))
 }
