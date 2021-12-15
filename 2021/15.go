@@ -1,8 +1,8 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -313,11 +313,12 @@ func LowestRiskRoute(cave Cave, start, end CaveLoc) int {
 
 	startLoc := routeLoc{Pos: start, IsOpen: true, BestDistance: 0, EstimatedTotal: estimateDist(start, end)}
 	locByCaveLoc := map[CaveLoc]*routeLoc{start: &startLoc}
-	openSet := []*routeLoc{&startLoc}
+	open := &openSet{&startLoc}
+	heap.Init(open)
 
 	var cur *routeLoc
-	for len(openSet) > 0 {
-		cur, openSet = openSet[0], openSet[1:]
+	for open.Len() > 0 {
+		cur = heap.Pop(open).(*routeLoc)
 		cur.IsOpen = false
 
 		if cur.Pos.X == end.X && cur.Pos.Y == end.Y {
@@ -354,11 +355,9 @@ func LowestRiskRoute(cave Cave, start, end CaveLoc) int {
 			loc.EstimatedTotal = dist + estimateDist(n, end)
 			if !loc.IsOpen {
 				loc.IsOpen = true
-				openSet = append(openSet, loc)
+				heap.Push(open, loc)
 			}
 		}
-
-		sort.Sort(byEstimatedTotal(openSet))
 	}
 
 	// should never happen
@@ -386,10 +385,27 @@ type routeLoc struct {
 	EstimatedTotal int
 }
 
-type byEstimatedTotal []*routeLoc
+// openSet is a min-heap that implements the heap.Interface
+type openSet []*routeLoc
 
-func (p byEstimatedTotal) Less(i, j int) bool {
-	return p[i].EstimatedTotal < p[j].EstimatedTotal
+func (s openSet) Less(i, j int) bool {
+	return s[i].EstimatedTotal < s[j].EstimatedTotal
 }
-func (p byEstimatedTotal) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
-func (p byEstimatedTotal) Len() int      { return len(p) }
+
+func (s openSet) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s openSet) Len() int {
+	return len(s)
+}
+
+func (s *openSet) Push(x interface{}) {
+	*s = append(*s, x.(*routeLoc))
+}
+
+func (s *openSet) Pop() interface{} {
+	x := (*s)[len(*s)-1]
+	*s = (*s)[:len(*s)-1]
+	return x
+}
