@@ -6,7 +6,7 @@ The puzzles have been solved with focus on writing easy to read, clean and simpl
 
 Some puzzles are just more fun to solve than others. These are the most memorable ones:
 
-* _None yet this year_
+* [Day 8: Seven Segment Search](08.go): Reading buggy digital displays.
 
 ## Room For Improvement
 
