@@ -3,8 +3,6 @@ package main
 import (
 	"container/heap"
 	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -180,121 +178,6 @@ func Day15() {
 	fmt.Println("Lowest risk route through the cave has a total risk of:", LowestRiskRoute(cave, cave.TopLeft(), cave.BottomRight()))
 	cave.Enlarge(5)
 	fmt.Println("Lowest risk route through the enlarged cave has a total risk of:", LowestRiskRoute(cave, cave.TopLeft(), cave.BottomRight()))
-}
-
-// Cave represents the cave, each coordinate representing the risk of the given position.
-// The risk of the position X, Y is found in cave[y][x].
-type Cave [][]int
-
-// NewCave takes the puzzle input and returns the cave it represents.
-// NewCave returns an error if the input contains anything unexpected.
-func NewCave(in string) (Cave, error) {
-	c := make(Cave, 0)
-	width := -1
-	for _, line := range strings.Split(in, "\n") {
-		if width < 0 {
-			width = len(line)
-		}
-		if len(line) != width {
-			return nil, errors.Errorf("all rows must have the same width (width=%d, expected=%d)", len(line), width)
-		}
-		row := make([]int, 0, width)
-		for _, v := range line {
-			risk, err := strconv.Atoi(string(v))
-			if err != nil {
-				return nil, errors.Wrapf(err, "unexpected character (c=%s)", string(v))
-			}
-			row = append(row, risk)
-		}
-		c = append(c, row)
-	}
-
-	return c, nil
-}
-
-// Enlarge enlarges the cave with the factor specified. It is enlarged by repeating the existing cave
-// and adding +1 to the risks for each repetion.
-// See puzzle input for more information.
-// If the factor specified is 1 or less Enlarge does nothing.
-func (c *Cave) Enlarge(factor int) {
-	if factor <= 1 {
-		return
-	}
-
-	incWithWrap := func(n int) int {
-		n++
-		if n >= 10 {
-			n = 1
-		}
-		return n
-	}
-
-	startWidth, startHeight := c.Width(), c.Height()
-
-	for y := 0; y < startHeight*factor; y++ {
-		row := make([]int, startWidth*factor)
-		if y < startHeight {
-			// initialize first values of row using the original cave values
-			for x := 0; x < startWidth; x++ {
-				row[x] = (*c)[y][x]
-			}
-		} else {
-			// initialize first values of row using the previous repetion + 1
-			for x := 0; x < startWidth; x++ {
-				row[x] = incWithWrap((*c)[y-startWidth][x])
-			}
-		}
-
-		// finish the row
-		for x := startWidth; x < startWidth*factor; x++ {
-			row[x] = incWithWrap(row[x-startWidth])
-		}
-
-		// update cave with the new row
-		if y < len(*c) {
-			(*c)[y] = row
-		} else {
-			*c = append(*c, row)
-		}
-	}
-}
-
-// Width returns the width of the cave.
-func (c Cave) Width() int {
-	if len(c) <= 0 {
-		return 0
-	}
-	return len(c[0])
-}
-
-// Height returns the height of the cave.
-func (c Cave) Height() int {
-	return len(c)
-}
-
-// TopLeft returns the cave location of the top left position in the cave.
-func (c Cave) TopLeft() CaveLoc {
-	return CaveLoc{0, 0}
-}
-
-// BottomRight returns the cave location of the bottom right position of the cave.
-func (c Cave) BottomRight() CaveLoc {
-	return CaveLoc{c.Width() - 1, c.Height() - 1}
-}
-
-// Print outputs the cave to stdout.
-func (c Cave) Print() {
-	for y := 0; y < len(c); y++ {
-		for x := 0; x < len(c[y]); x++ {
-			fmt.Print(c[y][x])
-		}
-		fmt.Println()
-	}
-}
-
-// CaveLoc represents a location within the cave.
-type CaveLoc struct {
-	X, Y int
 }
 
 // ShortestRoute finds the lowest risk route through the cave and returns the total sum of risk.

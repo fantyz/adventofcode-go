@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"sort"
-	"strconv"
-	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -80,107 +78,60 @@ Your puzzle answer was 1327014.
 
 func Day9() {
 	fmt.Println("--- Day 9: Smoke Basin ---")
-	cave, err := NewLavaTubesCave(day09Input)
+	cave, err := NewCave(day09Input)
 	if err != nil {
 		fmt.Println(errors.Wrap(err, "Failed to load cave"))
 		return
 	}
-	fmt.Println("Sum of the risk levels of all low points:", cave.LowPointRiskLevels())
-	fmt.Println("Size of the three largest basins multiplied:", cave.LargestThreeBasinsMultiplied())
-}
-
-// LavaTubesCave is a hightmap representing the cave.
-type LavaTubesCave [][]int
-
-// NewLavaTubesCave takes the puzzle input and returns a NewLavaTubesCave.
-// NewLavaTubesCave returns an error on any unexpected in the input.
-func NewLavaTubesCave(in string) (LavaTubesCave, error) {
-	var c LavaTubesCave
-	width := -1
-
-	for _, line := range strings.Split(in, "\n") {
-		if width < 0 {
-			width = len(line)
-		}
-		if len(line) != width {
-			return nil, errors.Errorf("unexpected length of row in lava tubes cave (count=%d, expected=%d)", len(line), width)
-		}
-
-		row := make([]int, 0, width)
-		for _, ch := range line {
-			val, err := strconv.Atoi(string(ch))
-			if err != nil {
-				return nil, errors.Wrapf(err, "bad lava tube cave value (val=%s)", string(ch))
-			}
-			row = append(row, val)
-		}
-		c = append(c, row)
-	}
-
-	return c, nil
-}
-
-// LavaTubesCaveLoc represents a position within the cave.
-type LavaTubesCaveLoc struct {
-	X, Y int
+	fmt.Println("Sum of the risk levels of all low points:", LowPointRiskLevels(cave))
+	fmt.Println("Size of the three largest basins multiplied:", LargestThreeBasinsMultiplied(cave))
 }
 
 // LowPointRiskLevels identifies and sums the risk of each low point within the cave.
-func (c LavaTubesCave) LowPointRiskLevels() int {
+func LowPointRiskLevels(cave Cave) int {
 	sum := 0
 
-	for y := 0; y < len(c); y++ {
-		for x := 0; x < len(c[y]); x++ {
-			neighbors := []LavaTubesCaveLoc{
-				{x - 1, y},
-				{x, y + 1},
-				{x + 1, y},
-				{x, y - 1},
-			}
-
+	for y := 0; y < len(cave); y++ {
+		for x := 0; x < len(cave[y]); x++ {
 			isLowPoint := true
-			for _, n := range neighbors {
-				if n.X < 0 || n.X >= len(c[0]) || n.Y < 0 || n.Y >= len(c) {
-					continue
-				}
-				if c[y][x] >= c[n.Y][n.X] {
+			for _, n := range cave.Neighbors(CaveLoc{x, y}, false) {
+				if cave[y][x] >= cave[n.Y][n.X] {
 					isLowPoint = false
 					break
 				}
 			}
 
 			if isLowPoint {
-				sum += c[y][x] + 1
+				sum += cave[y][x] + 1
 			}
 		}
 	}
 
 	return sum
-
 }
 
 // LargestThreeBasinsMultiplied identifies the various basins within the cave and returns the size
 // of the larget three multiplied.
-func (c LavaTubesCave) LargestThreeBasinsMultiplied() int {
+func LargestThreeBasinsMultiplied(cave Cave) int {
 	var basinSize []int
 	// locToBasinID tracks locations and what basin they belong to (the index of basinSize)
-	locToBasinID := map[LavaTubesCaveLoc]int{}
+	locToBasinID := map[CaveLoc]int{}
 
-	for y := 0; y < len(c); y++ {
-		for x := 0; x < len(c[y]); x++ {
-			if c[y][x] == 9 {
+	for y := 0; y < len(cave); y++ {
+		for x := 0; x < len(cave[y]); x++ {
+			if cave[y][x] == 9 {
 				// no basin here
 				continue
 			}
 
-			pos := LavaTubesCaveLoc{x, y}
+			pos := CaveLoc{x, y}
 			if _, found := locToBasinID[pos]; found {
 				// in an already processed basin
 				continue
 			}
 
 			// in a new basin, lets explore it
-			basinSize = append(basinSize, c.exploreBasin(len(basinSize), pos, locToBasinID))
+			basinSize = append(basinSize, exploreBasin(cave, len(basinSize), pos, locToBasinID))
 		}
 	}
 
@@ -193,13 +144,13 @@ func (c LavaTubesCave) LargestThreeBasinsMultiplied() int {
 	return basinSize[n-3] * basinSize[n-2] * basinSize[n-1]
 }
 
-// exploreBasin takes a basin id and start location of a basin and explores it, finding all locations
-// belonging to it and updating locToBasinID appropriately before returning the number of poistions
-// belonging to the basin.
-func (c LavaTubesCave) exploreBasin(id int, startLoc LavaTubesCaveLoc, locToBasinID map[LavaTubesCaveLoc]int) int {
+// exploreBasin takes a cave, a basin id and start location of a basin and explores it, finding all
+// locations belonging to it and updating locToBasinID appropriately before returning the number of
+// poistions belonging to the basin.
+func exploreBasin(cave Cave, id int, startLoc CaveLoc, locToBasinID map[CaveLoc]int) int {
 	size := 0
-	var pos LavaTubesCaveLoc
-	unvisited := []LavaTubesCaveLoc{startLoc}
+	var pos CaveLoc
+	unvisited := []CaveLoc{startLoc}
 	for len(unvisited) > 0 {
 		pos, unvisited = unvisited[len(unvisited)-1], unvisited[:len(unvisited)-1]
 
@@ -208,7 +159,7 @@ func (c LavaTubesCave) exploreBasin(id int, startLoc LavaTubesCaveLoc, locToBasi
 			continue
 		}
 
-		if c[pos.Y][pos.X] == 9 {
+		if cave[pos.Y][pos.X] == 9 {
 			// not a basin
 			locToBasinID[pos] = -1
 			continue
@@ -217,16 +168,7 @@ func (c LavaTubesCave) exploreBasin(id int, startLoc LavaTubesCaveLoc, locToBasi
 		locToBasinID[pos] = id
 		size++
 
-		neighbors := []LavaTubesCaveLoc{
-			{pos.X - 1, pos.Y},
-			{pos.X, pos.Y + 1},
-			{pos.X + 1, pos.Y},
-			{pos.X, pos.Y - 1},
-		}
-		for _, n := range neighbors {
-			if n.X < 0 || n.X >= len(c[0]) || n.Y < 0 || n.Y >= len(c) {
-				continue
-			}
+		for _, n := range cave.Neighbors(pos, false) {
 			unvisited = append(unvisited, n)
 		}
 	}
