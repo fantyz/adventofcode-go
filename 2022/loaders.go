@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/pkg/errors"
 )
 
 // LoadInts takes an input string and reads out any integers found in it in the order they
@@ -33,4 +35,15 @@ func LoadInts(in string) []int {
 		}
 	}
 	return v
+}
+
+// ToIntOrPanic takes an input string and converts it to an integer. If unable it will
+// panic. You should only use this if you are guaranteed that the input indeed is an integer
+// like is the case where you matched the string with a regexp already.
+func ToIntOrPanic(in string) int {
+	n, err := strconv.Atoi(in)
+	if err != nil {
+		panic(errors.Wrapf(err, "Unable to convert value to int (in=%s)", in))
+	}
+	return n
 }
