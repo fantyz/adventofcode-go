@@ -30,7 +30,12 @@ func main() {
 	} else {
 		// run all days
 		for i := 1; i <= 25; i++ {
-			if day, found := days[strconv.Itoa(i)]; found {
+			num := strconv.Itoa(i)
+			if i < 10 {
+				num = "0"+num
+			}
+
+			if day, found := days[num]; found {
 				timedDay(day)
 				fmt.Println()
 			}
