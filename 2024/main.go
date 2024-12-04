@@ -21,7 +21,11 @@ func main() {
 	}
 
 	if len(os.Args) == 2 {
-		day, found := days[os.Args[1]]
+		num := os.Args[1]
+		if len(num) == 1 {
+			num = "0"+num
+		}
+		day, found := days[num]
 		if !found {
 			fmt.Println("ERROR: No day found for " + os.Args[1])
 			return
