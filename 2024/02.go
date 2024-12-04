@@ -66,7 +66,7 @@ Your puzzle answer was 536.
 */
 
 func Day02() {
-	fmt.Println("Day 2: Red-Nosed Reports")
+	fmt.Println("--- Day 2: Red-Nosed Reports ---")
 	reports := LoadReports(day02Input)
 	fmt.Println("Part 1: Safe reports (wo. problem dampner):", CountSafeReports(reports, false))
 	fmt.Println("Part 2: Safe reports (w. problem dampner):", CountSafeReports(reports, true))
