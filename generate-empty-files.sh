@@ -39,6 +39,9 @@ echo "package main
 
 import (
 	\"testing\"
+
+
+        \"github.com/stretchr/testify/assert\"
 )
 
 func TestDay${2}Pt1(t *testing.T) {
