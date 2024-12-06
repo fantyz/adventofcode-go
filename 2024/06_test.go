@@ -49,8 +49,7 @@ func TestDay06Pt1(t *testing.T) {
 func TestDay06Pt2(t *testing.T) {
 	lab, err := NewLabMap(day06Input)
 	if assert.NoError(t, err) {
-		_ = lab
-		//assert.Equal(t, 1972, lab.NumberOfWaysToTrapGuard())
+		assert.Equal(t, 1972, lab.NumberOfWaysToTrapGuard())
 	}
 }
 

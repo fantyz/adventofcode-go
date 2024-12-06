@@ -305,27 +305,25 @@ func (l *LabMap) GuardPatrolPositions() []Coord {
 // NumberOfWaysToTrapGuard returns the number of ways the guard could be caught in loop by inserting a single obstacle
 // into the map.
 func (l *LabMap) NumberOfWaysToTrapGuard() int {
-	// brute forcing this- I cannot think of a better solution to just trying to insert an obstacle in each
-	// possible place in the map and test it.
 	count := 0
 
-	for y := range l.m {
-		for x := range l.m[y] {
-			if l.Location(x, y) != 0 || (l.guardPos.X == x && l.guardPos.Y == y) {
-				// non-empty location, skip it
-				continue
-			}
+	potentialBlockingPoints := l.GuardPatrolPositions()
 
-			// insert obstacle
-			l.m[y][x] = true
-
-			// test if guard gets caught in loop
-			if steps := l.GuardPatrolPositions(); steps == nil {
-				count++
-			}
-
-			l.m[y][x] = false
+	for _, coord := range potentialBlockingPoints {
+		if l.guardPos.X == coord.X && l.guardPos.Y == coord.Y {
+			// skip the guard starting point
+			continue
 		}
+
+		// insert obstacle
+		l.m[coord.Y][coord.X] = true
+
+		// test if guard gets caught in loop
+		if steps := l.GuardPatrolPositions(); steps == nil {
+			count++
+		}
+
+		l.m[coord.Y][coord.X] = false
 	}
 
 	return count
