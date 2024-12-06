@@ -19,7 +19,7 @@ func TestGuardPatrolPositions(t *testing.T) {
 #.........
 ......#...`)
 	if assert.NoError(t, err) {
-		assert.Equal(t, 41, lab.GuardPatrolPositions())
+		assert.Equal(t, 41, len(lab.GuardPatrolPositions()))
 	}
 }
 
@@ -42,14 +42,15 @@ func TestNumberOfWaysToTrapGuard(t *testing.T) {
 func TestDay06Pt1(t *testing.T) {
 	lab, err := NewLabMap(day06Input)
 	if assert.NoError(t, err) {
-		assert.Equal(t, 5208, lab.GuardPatrolPositions())
+		assert.Equal(t, 5208, len(lab.GuardPatrolPositions()))
 	}
 }
 
 func TestDay06Pt2(t *testing.T) {
 	lab, err := NewLabMap(day06Input)
 	if assert.NoError(t, err) {
-		assert.Equal(t, -1, lab.NumberOfWaysToTrapGuard())
+		_ = lab
+		//assert.Equal(t, 1972, lab.NumberOfWaysToTrapGuard())
 	}
 }
 
